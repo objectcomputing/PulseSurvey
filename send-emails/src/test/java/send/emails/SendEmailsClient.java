@@ -1,7 +1,6 @@
 package send.emails;
 
 import io.micronaut.function.client.FunctionClient;
-import io.micronaut.http.annotation.Body;
 import io.reactivex.Single;
 import javax.inject.Named;
 
@@ -9,6 +8,6 @@ import javax.inject.Named;
 public interface SendEmailsClient {
 
     @Named("send-emails")
-    Single<SendEmails> apply(@Body SendEmails body);
+    Single<SendEmails> get();
 
 }

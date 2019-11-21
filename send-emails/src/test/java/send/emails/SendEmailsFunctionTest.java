@@ -14,8 +14,6 @@ public class SendEmailsFunctionTest {
 
     @Test
     public void testFunction() throws Exception {
-    	SendEmails body = new SendEmails();
-    	body.setName("send-emails");
-        assertEquals("send-emails", client.apply(body).blockingGet().getName());
+        assertEquals("I work...or something...", client.get().blockingGet().getName());
     }
 }
