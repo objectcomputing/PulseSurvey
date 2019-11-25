@@ -9,11 +9,11 @@ matrix:
         - npm run test
 
     - language: java
-      jdk: oraclejdk8
+      jdk: openjdk8
       before_script:
         - cd send-emails
 
     - language: java
-      jdk: oraclejdk11
+      jdk: openjdk11
       before_script:
         - cd server
