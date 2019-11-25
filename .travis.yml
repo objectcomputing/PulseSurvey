@@ -3,17 +3,19 @@ matrix:
     - language: node_js
       node_js:
         - node
+      cache:
+        directories:
+          - "frontend/node_modules"
       before_script:
         - cd frontend
-      script:
-        - npm run test
+        - npm install
 
     - language: java
-      jdk: oraclejdk8
+      jdk: openjdk8
       before_script:
         - cd send-emails
 
     - language: java
-      jdk: oraclejdk11
+      jdk: openjdk11
       before_script:
         - cd server
