@@ -12,12 +12,8 @@ matrix:
       jdk: oraclejdk8
       before_script:
         - cd send-emails
-      script:
-        - ./gradlew build
 
     - language: java
       jdk: oraclejdk11
       before_script:
         - cd server
-      script:
-        - ./gradlew build
