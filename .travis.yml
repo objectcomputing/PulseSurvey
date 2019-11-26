@@ -19,6 +19,7 @@ matrix:
       local-dir: build
       acl: public_read
       skip_cleanup: true
+      region: us-east-2
   - language: java
     jdk: openjdk8
     before_script:
