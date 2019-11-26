@@ -25,6 +25,10 @@ matrix:
     before_script:
     - cd send-emails
   - language: java
+    jdk: openjdk8
+    before_script:
+    - cd get-emails
+  - language: java
     jdk: openjdk11
     before_script:
     - cd server
