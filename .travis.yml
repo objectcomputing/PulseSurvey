@@ -27,7 +27,7 @@ matrix:
   - language: java
     jdk: openjdk8
     before_script:
-    - cd get-emails
+    - cd get-users
   - language: java
     jdk: openjdk11
     before_script:
