@@ -12,10 +12,10 @@ matrix:
     before_deploy: npm run build
     deploy:
       provider: s3
-      access_key_id: AKIA4X6YDESL4TOFTQOG
+      access_key_id: AKIAWPLC2AJPVKVCUBV3
       secret_access_key:
-        secure: "ocG/t2vNakSmoVyEZBCNkdtHGPSE1wpREZ+Rr+RiFRw+B0pghbPbQJZbwCeTdj5p6aLr344ABtPD+i5sdv4LOpGv97F5F/OIxCaCeX46lpKaI75gf4c/gRvLupYoZWkCftQ+apcjXaoY4OnvysaiUqjbbn14xdambq2LhAzsiyDzckYpbxvL8PxatDkeGjsXuHUrRR8GJs10N/Y3z+O1ejZSKszZKHV5LC1CDLEY3UyImrwz4M21r+cHvsciSOxt8Pm3Kri6nb7+1LM0BnGDiHd6ijt2w0fMJqbnxrV77fPnUAEBlLzhUw9LqqW4snk/+VpDb6kFiD8YTGYUEKGfmtMYYVVuvOMwqtK3CrJBfmLtYitsyjtUZslHubLI9ndpO3CzrU6ign9OoiRWb5OVQSML7IZcCnAA13nPpWqdtLhMDsvLp7gwFatDpogQSnvF1D8My7FoXkrh2N2sJcW6W5NQG70B/YQOegVhXDkZ1Pvgp8NHj2iBv/ym9FXBSFAyq75ddnJcm86omrtVJTEVoymqb5xc/z/T9wBht/sUgVni4PquZrc892tlhFVFTX1OB4AS0h/ua0CNlasDfCInnO1DBjAucJEHcTZksi/D40f5k/k4kG08zFF3km5i8aE8gZDHe2fqkPF7fPgcHtCYqC4xagxOu/+iyfZ+AQ0xloA="
-      bucket: oci-pulse-survey
+        secure: "j6NEEY0BU4e9nYMYqmRDckgt0aGOB9xmBJvlPgeTj97FHSCxJRv1tTpcEwPoqxX0CASORW9Cru0W27OnPE7hW+AR2szx2YfybAwY0R2A2Y1hBj4g61cAvjr32aLz+SBjDrdhh/3SAHsciXrwNL2EKSLrwl0IDl9UiT59DJTOAcO/j9Tjw71+h6Y2zcdS+iKZ8fzlMBxJkg2MXSV9RCSXbU3nY8UcDyeS/RywNvHfbXcX7x3iK/yU+249/IKP1TeDyucxYbCE0Zvv4TEJi09BNIYBGQXGCp/3+wscT6stbj06lGZ96uLN4vZWx7pDfQEJuqfZ6CxgXSoR2DGBpayffI1LI4lVy9R9vwK3fD6p7JW7brktvqnRTqocSW/o8dz6JKjJPNSTQ8NZxPaIPaNWman+52JcN73sMDiuODlDyGiEtB1VyLhjTAwZIaCaLoL9QFcDqb/RFBE+4/+Khl1wM8yQAd5CGz6yuRz6hjbIwvxN+YbzjaT7qpNW4C2p0pjvOnNEAe7wV1BJVvEAHQge2jKVtz+FIJXOZqXefHLAll2t+1obqIv3MnXXTMOhpvszTFod63SXYbNRcS8nXdRvW4AKIQiEguGD48Qk07DMbvPNhd3KdW+wJ0rQECrR3XK4ZKDTE9ajCC6fM9SL3DIf2SJAfZ7khEdBE9liEbl0ccw="
+      bucket: pulsesurveys
       local-dir: build
       acl: public_read
       skip_cleanup: true
