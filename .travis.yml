@@ -29,7 +29,7 @@ matrix:
       provider: lambda
       function_name: send-emails
       region: us-east-1
-      role: "arn:aws:iam::876089648279:role/service-role/send-emails-role-ewrr3mey"
+      role: "arn:aws:iam::445273211487:role/service-role/send-emails-role-66wrpzrr"
       runtime: "java11"
       handler_name: "io.micronaut.function.aws.MicronautRequestStreamHandler"
       access_key_id: AKIAWPLC2AJPVKVCUBV3
