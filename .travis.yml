@@ -32,13 +32,23 @@ matrix:
       role: "arn:aws:iam::876089648279:role/SurveyLambdaExecutionRole"
       runtime: "java11"
       handler_name: "io.micronaut.function.aws.MicronautRequestStreamHandler"
-      access_key_id: AKIA4X6YDESL4TOFTQOG
+      access_key_id: AKIA4X6YDESL2MD5W57O
       secret_access_key:
-        secure: "ocG/t2vNakSmoVyEZBCNkdtHGPSE1wpREZ+Rr+RiFRw+B0pghbPbQJZbwCeTdj5p6aLr344ABtPD+i5sdv4LOpGv97F5F/OIxCaCeX46lpKaI75gf4c/gRvLupYoZWkCftQ+apcjXaoY4OnvysaiUqjbbn14xdambq2LhAzsiyDzckYpbxvL8PxatDkeGjsXuHUrRR8GJs10N/Y3z+O1ejZSKszZKHV5LC1CDLEY3UyImrwz4M21r+cHvsciSOxt8Pm3Kri6nb7+1LM0BnGDiHd6ijt2w0fMJqbnxrV77fPnUAEBlLzhUw9LqqW4snk/+VpDb6kFiD8YTGYUEKGfmtMYYVVuvOMwqtK3CrJBfmLtYitsyjtUZslHubLI9ndpO3CzrU6ign9OoiRWb5OVQSML7IZcCnAA13nPpWqdtLhMDsvLp7gwFatDpogQSnvF1D8My7FoXkrh2N2sJcW6W5NQG70B/YQOegVhXDkZ1Pvgp8NHj2iBv/ym9FXBSFAyq75ddnJcm86omrtVJTEVoymqb5xc/z/T9wBht/sUgVni4PquZrc892tlhFVFTX1OB4AS0h/ua0CNlasDfCInnO1DBjAucJEHcTZksi/D40f5k/k4kG08zFF3km5i8aE8gZDHe2fqkPF7fPgcHtCYqC4xagxOu/+iyfZ+AQ0xloA="
+        secure: "PrHXIGMeDJ/PfsRDP71u7NOtyYtHeMO53wPhEjtybgA4FN2Q3E6JfaEDgq1xEkBWQTaLE9jkoLVeIK5Q5MQA8VypyvxlN+p5tEcD1CSuFGLJyQXeD3n/CthoUnEpkz4Kw5V/LZ2SdnT3dUXyQ4XANODfoShOpCRvFqM66OIGQHCHjv8rL9n8djnNVyNkxXaxa1bnCxMMBI4jKYXxLjsv7OqdmW6E628QQmdf3iNT4W0748QSYfZCNi6Q9h5q9lrOxX6mtBwtIjnhVgj7cUq9F0Y4Eqb8DnB3mE8yiyVSDeZTGwOTd1aB/6/Rcsa5nBFVvJQCKMiEgLDmz78/gnZ8m5vkLTqz9DOPl+0GgjdR9uJu2nxOlCAGmCfg5xwwzooSQpS9Fq2KlmeJFM47YfYwtHSAaybuKoH0rcggWG6XAo7UZbHQqsM1e8LOjYTqXy0tORnb+BfXfOcO+l5phb/93OQ49CBz3vb06HJ2bIzUb+ghiKCXNRIqEzKV26gwvnDdNwkAfGbnPMjQmov6hGfKRtCDIoYa5cK7n+h8/NaIS5BL0fKiRUKkNN7XzoByiTDB6G1H+BwR+H55rAM+taNkBvv4pPbB6z6aObOBz6V72FvNtK375S5K6wRJhwdvzxxu7BhH0o+RePKz/liRA1Kxnv6UUhWzBJB/UMw0D2qnr1k="
   - language: java
     jdk: openjdk8
     before_script:
     - cd get-users
+    deploy:
+      provider: lambda
+      function_name: get-users
+      region: us-east-2
+      role: "arn:aws:iam::876089648279:role/SurveyLambdaExecutionRole"
+      runtime: "java11"
+      handler_name: "io.micronaut.function.aws.MicronautRequestStreamHandler"
+      access_key_id: AKIA4X6YDESL2MD5W57O
+      secret_access_key:
+        secure: "PrHXIGMeDJ/PfsRDP71u7NOtyYtHeMO53wPhEjtybgA4FN2Q3E6JfaEDgq1xEkBWQTaLE9jkoLVeIK5Q5MQA8VypyvxlN+p5tEcD1CSuFGLJyQXeD3n/CthoUnEpkz4Kw5V/LZ2SdnT3dUXyQ4XANODfoShOpCRvFqM66OIGQHCHjv8rL9n8djnNVyNkxXaxa1bnCxMMBI4jKYXxLjsv7OqdmW6E628QQmdf3iNT4W0748QSYfZCNi6Q9h5q9lrOxX6mtBwtIjnhVgj7cUq9F0Y4Eqb8DnB3mE8yiyVSDeZTGwOTd1aB/6/Rcsa5nBFVvJQCKMiEgLDmz78/gnZ8m5vkLTqz9DOPl+0GgjdR9uJu2nxOlCAGmCfg5xwwzooSQpS9Fq2KlmeJFM47YfYwtHSAaybuKoH0rcggWG6XAo7UZbHQqsM1e8LOjYTqXy0tORnb+BfXfOcO+l5phb/93OQ49CBz3vb06HJ2bIzUb+ghiKCXNRIqEzKV26gwvnDdNwkAfGbnPMjQmov6hGfKRtCDIoYa5cK7n+h8/NaIS5BL0fKiRUKkNN7XzoByiTDB6G1H+BwR+H55rAM+taNkBvv4pPbB6z6aObOBz6V72FvNtK375S5K6wRJhwdvzxxu7BhH0o+RePKz/liRA1Kxnv6UUhWzBJB/UMw0D2qnr1k="
   - language: java
     jdk: openjdk11
     before_script:
