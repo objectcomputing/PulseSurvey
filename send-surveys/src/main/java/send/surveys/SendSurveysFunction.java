@@ -8,6 +8,8 @@ import java.util.function.Supplier;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.Map;
+import java.util.HashMap;
 import java.lang.Math;
 
 @FunctionBean("send-surveys")
@@ -71,7 +73,7 @@ public class SendSurveysFunction extends FunctionInitializer
 
         for (String email:emails) {
             // add email and key to map
-            map.put
+            //map.put()
         }
 
         return map;
