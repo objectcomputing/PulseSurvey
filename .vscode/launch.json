@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - SendSurveysFunction",
+            "request": "launch",
+            "mainClass": "send.surveys.SendSurveysFunction"
+        }
+    ]
+}
