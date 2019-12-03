@@ -1,0 +1,5 @@
+profile: function-aws
+defaultPackage: send.surveys
+---
+testFramework: junit
+sourceLanguage: java
