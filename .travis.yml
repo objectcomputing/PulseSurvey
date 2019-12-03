@@ -12,10 +12,10 @@ matrix:
     before_deploy: npm run build
     deploy:
       provider: s3
-      access_key_id: AKIAWPLC2AJPVKVCUBV3
+      access_key_id: AKIA4X6YDESL4TOFTQOG
       secret_access_key:
-        secure: "LuIZ/lc0rGe7NbAmkzpeOkYtAAVoiJc9dSdYUAFmypxgSCqRqe8WWpQkGeAChGQl7TvI7MGU0Xpl6eskHJQAoWOMr8oWKcfrHhq0eq4aLm7+7bJvTuENp8vpNGxo+6qAv8SgJ4A57GNnRiaGScCORK1AdEMQenKJQhQlN6y5uphyKHndBJHUd9CL9/EwH1wMLOaWGiup6U2sItmndkC1fRAjvLGIgo+gF/nKfTeQ9POLy+wndvd4sc5pTTaj1l6oSeUEjasrTHIPrQ8aX8BZ6Z32nq3ahyDcJjFa/3PI1b5DD8grj/HFbX2XnOUKXxBiIChdtEhz9zMoNrWj1MtSWXxz+fcoXUB0fkCYW2y/UWVqy7HFy8Fz06Ima0RRMzfr53DXGq5c2Ogp4zFgwGDCvorpseCt8U1HGIQHMId8WaVBrYvwseRx9Rlsf5apKWM3K1JbMvB/xhl7vOo+1KpnLquOxCu6ghbBlpXiuBRdYWN3Q8VKQg3xVE08e+wJW3lgndIT5bN2SwuX5jj5SDF9kEXnGsQauO/06UyMNz2mAKatNQ9lUgUx9uvahcQR4wWvVVhquyOLa5MDQvEpEaXJGX6bLsisy+LmrVDezd46hAj1yTzf3rXXQc4oxJGv+rfIVmHS2RNsomsByeouaUxZkN0Y268EDlEXMkSXyyd6ySI="
-      bucket: pulsesurveys
+        secure: "ocG/t2vNakSmoVyEZBCNkdtHGPSE1wpREZ+Rr+RiFRw+B0pghbPbQJZbwCeTdj5p6aLr344ABtPD+i5sdv4LOpGv97F5F/OIxCaCeX46lpKaI75gf4c/gRvLupYoZWkCftQ+apcjXaoY4OnvysaiUqjbbn14xdambq2LhAzsiyDzckYpbxvL8PxatDkeGjsXuHUrRR8GJs10N/Y3z+O1ejZSKszZKHV5LC1CDLEY3UyImrwz4M21r+cHvsciSOxt8Pm3Kri6nb7+1LM0BnGDiHd6ijt2w0fMJqbnxrV77fPnUAEBlLzhUw9LqqW4snk/+VpDb6kFiD8YTGYUEKGfmtMYYVVuvOMwqtK3CrJBfmLtYitsyjtUZslHubLI9ndpO3CzrU6ign9OoiRWb5OVQSML7IZcCnAA13nPpWqdtLhMDsvLp7gwFatDpogQSnvF1D8My7FoXkrh2N2sJcW6W5NQG70B/YQOegVhXDkZ1Pvgp8NHj2iBv/ym9FXBSFAyq75ddnJcm86omrtVJTEVoymqb5xc/z/T9wBht/sUgVni4PquZrc892tlhFVFTX1OB4AS0h/ua0CNlasDfCInnO1DBjAucJEHcTZksi/D40f5k/k4kG08zFF3km5i8aE8gZDHe2fqkPF7fPgcHtCYqC4xagxOu/+iyfZ+AQ0xloA="
+      bucket: oci-pulse-survey
       local-dir: build
       acl: public_read
       skip_cleanup: true
@@ -28,13 +28,13 @@ matrix:
     deploy:
       provider: lambda
       function_name: send-emails
-      region: us-east-1
-      role: "arn:aws:iam::445273211487:role/service-role/send-emails-role-66wrpzrr"
+      region: us-east-2
+      role: "arn:aws:iam::876089648279:role/SurveyLambdaExecutionRole"
       runtime: "java11"
       handler_name: "io.micronaut.function.aws.MicronautRequestStreamHandler"
-      access_key_id: AKIAWPLC2AJPVKVCUBV3
+      access_key_id: AKIA4X6YDESL4TOFTQOG
       secret_access_key:
-        secure: "LuIZ/lc0rGe7NbAmkzpeOkYtAAVoiJc9dSdYUAFmypxgSCqRqe8WWpQkGeAChGQl7TvI7MGU0Xpl6eskHJQAoWOMr8oWKcfrHhq0eq4aLm7+7bJvTuENp8vpNGxo+6qAv8SgJ4A57GNnRiaGScCORK1AdEMQenKJQhQlN6y5uphyKHndBJHUd9CL9/EwH1wMLOaWGiup6U2sItmndkC1fRAjvLGIgo+gF/nKfTeQ9POLy+wndvd4sc5pTTaj1l6oSeUEjasrTHIPrQ8aX8BZ6Z32nq3ahyDcJjFa/3PI1b5DD8grj/HFbX2XnOUKXxBiIChdtEhz9zMoNrWj1MtSWXxz+fcoXUB0fkCYW2y/UWVqy7HFy8Fz06Ima0RRMzfr53DXGq5c2Ogp4zFgwGDCvorpseCt8U1HGIQHMId8WaVBrYvwseRx9Rlsf5apKWM3K1JbMvB/xhl7vOo+1KpnLquOxCu6ghbBlpXiuBRdYWN3Q8VKQg3xVE08e+wJW3lgndIT5bN2SwuX5jj5SDF9kEXnGsQauO/06UyMNz2mAKatNQ9lUgUx9uvahcQR4wWvVVhquyOLa5MDQvEpEaXJGX6bLsisy+LmrVDezd46hAj1yTzf3rXXQc4oxJGv+rfIVmHS2RNsomsByeouaUxZkN0Y268EDlEXMkSXyyd6ySI="
+        secure: "ocG/t2vNakSmoVyEZBCNkdtHGPSE1wpREZ+Rr+RiFRw+B0pghbPbQJZbwCeTdj5p6aLr344ABtPD+i5sdv4LOpGv97F5F/OIxCaCeX46lpKaI75gf4c/gRvLupYoZWkCftQ+apcjXaoY4OnvysaiUqjbbn14xdambq2LhAzsiyDzckYpbxvL8PxatDkeGjsXuHUrRR8GJs10N/Y3z+O1ejZSKszZKHV5LC1CDLEY3UyImrwz4M21r+cHvsciSOxt8Pm3Kri6nb7+1LM0BnGDiHd6ijt2w0fMJqbnxrV77fPnUAEBlLzhUw9LqqW4snk/+VpDb6kFiD8YTGYUEKGfmtMYYVVuvOMwqtK3CrJBfmLtYitsyjtUZslHubLI9ndpO3CzrU6ign9OoiRWb5OVQSML7IZcCnAA13nPpWqdtLhMDsvLp7gwFatDpogQSnvF1D8My7FoXkrh2N2sJcW6W5NQG70B/YQOegVhXDkZ1Pvgp8NHj2iBv/ym9FXBSFAyq75ddnJcm86omrtVJTEVoymqb5xc/z/T9wBht/sUgVni4PquZrc892tlhFVFTX1OB4AS0h/ua0CNlasDfCInnO1DBjAucJEHcTZksi/D40f5k/k4kG08zFF3km5i8aE8gZDHe2fqkPF7fPgcHtCYqC4xagxOu/+iyfZ+AQ0xloA="
   - language: java
     jdk: openjdk8
     before_script:
