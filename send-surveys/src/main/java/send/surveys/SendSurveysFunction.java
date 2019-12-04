@@ -24,26 +24,28 @@ public class SendSurveysFunction extends FunctionInitializer
         SendSurveys msg = new SendSurveys();
         msg.setName("I'm gonna send surveys, eventually.");
         // to get aws environment vars:
-        // System.getenv("NAME_OF_YOUR_ENV_VARIABLE")
-        List<String> emailAddresses = getRandomEmailAddresses(5);
-        System.out.println("   EMAIL addresses: " + emailAddresses);
-        List<String> keys = generateKeys(3);
-        System.out.println("   KEYS: " + keys);
+        //  System.getenv("NAME_OF_YOUR_ENV_VARIABLE") // NOTE: getenv returns a string
+        //  int percentOfEmailsToGet = System.getenv("PercentOfEmailsToGet");
+        // can also get all of the env vars in a Map
+        // see:  https://docs.oracle.com/javase/tutorial/essential/environment/env.html
+
+        int percentOfEmailsToGet = 9;  // will be set from env var
+        List<String> emailAddresses = getRandomEmailAddresses(percentOfEmailsToGet);
+        List<String> keys = generateKeys(emailAddresses.size());
+        Map<String, String> emailKeyMap = new HashMap<String, String>();
+        emailKeyMap = mapEmailsToKeys(emailAddresses, keys);
+        System.out.println("   And Finally  - emailKeyMap: " + emailKeyMap);
+        // store keys in database
+        // send some emails
         return msg;
     }
 
     public List<String> getRandomEmailAddresses(int whatPercentOfTotal) {
         double totalAddresses = getTotalNumberOfAvailableEmailAddresses();
-//        double totalAddresses = 170.0;   //change this later with a call to google groups api to get this number
-        double percentToSend = (double)whatPercentOfTotal/100;
-        long numberOfAddresses = Math.round(totalAddresses*percentToSend);
+        long numberOfAddresses = (long)Math.ceil(totalAddresses*(double)whatPercentOfTotal/100.0);
         List<String> emailAddresses = new ArrayList<String>();
 
-        System.out.println("   whatPercentOfTotal: " + whatPercentOfTotal);
-        System.out.println("   percentToSend: " + percentToSend);
-        System.out.println("   totalAddresses: " + totalAddresses);
-        System.out.println("   How many EMAIL addresses to send to: " + numberOfAddresses);
-
+        // later - get x random email addresses from google
         emailAddresses.add("williamsh@objectcomputing.com");
         emailAddresses.add("kimberlinm@objectcomputing.com");
         emailAddresses.add("patilm@objectcomputing.com");
@@ -71,12 +73,18 @@ public class SendSurveysFunction extends FunctionInitializer
         Map<String, String> map = new HashMap<String, String>();
         int numberOfPairs = Math.min(emails.size(), keys.size());
 
-        for (String email:emails) {
+        for (int i = 0; i < numberOfPairs; i++) {
             // add email and key to map
-            //map.put()
+            map.put(emails.get(i), keys.get(i));
         }
 
         return map;
+    }
+
+    public void sendTheEmails(List<String> emails, List<String> keys) {
+
+        // call some google api with the list of emails to send them with a key for each
+
     }
 
     /**
