@@ -40,7 +40,7 @@ public class SendSurveysFunction extends FunctionInitializer
         return msg;
     }
 
-    public List<String> getRandomEmailAddresses(int whatPercentOfTotal) {
+     List<String> getRandomEmailAddresses(int whatPercentOfTotal) {
         double totalAddresses = getTotalNumberOfAvailableEmailAddresses();
         long numberOfAddresses = (long)Math.ceil(totalAddresses*(double)whatPercentOfTotal/100.0);
         List<String> emailAddresses = new ArrayList<String>();
@@ -52,7 +52,7 @@ public class SendSurveysFunction extends FunctionInitializer
         return emailAddresses;
     }
 
-    public List<String> generateKeys(int howManyKeys) {
+     List<String> generateKeys(int howManyKeys) {
         List<String> keys = new ArrayList<String>();
 
         for(int i = 0; i < howManyKeys; i++) {
@@ -62,19 +62,13 @@ public class SendSurveysFunction extends FunctionInitializer
         return keys;
     }
 
-    public int getTotalNumberOfAvailableEmailAddresses() {
+     int getTotalNumberOfAvailableEmailAddresses() {
 
         int howMany = 170;  //replace this with a call to google groups
         return howMany;
     }
 
-    public int x() {
-
-        int howMany = 170;  //replace this with a call to google groups
-        return howMany;
-    }
-
-    public Map<String, String> mapEmailsToKeys(List<String> emails, List<String> keys) {
+     Map<String, String> mapEmailsToKeys(List<String> emails, List<String> keys) {
 
         Map<String, String> map = new HashMap<String, String>();
         int numberOfPairs = Math.min(emails.size(), keys.size());
@@ -87,7 +81,7 @@ public class SendSurveysFunction extends FunctionInitializer
         return map;
     }
 
-    public void sendTheEmails(List<String> emails, List<String> keys) {
+     void sendTheEmails(List<String> emails, List<String> keys) {
 
         // call some google api with the list of emails to send them with a key for each
 
