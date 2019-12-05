@@ -16,4 +16,25 @@ public class SendSurveysFunctionTest {
     public void testFunction() throws Exception {
         assertEquals("I'm gonna send surveys, eventually.", client.get().blockingGet().getName());
     }
+
+    @Test
+    public void testGetTotalNumberOfAvailableEmailAddresses() {
+
+        SendSurveysFunction itemUnderTest = new SendSurveysFunction();
+        assertEquals(170, itemUnderTest.getTotalNumberOfAvailableEmailAddresses());
+    }
+
+    // getRandomEmailAddresses produces a list of email addresses
+    //      set up a list of emails and see if this method returns same
+    // generateKeys produces a list of uuid keys in string format
+    //      set up a list of uuid keys and see if this method returns same
+    // getTotalNumberOfAvailableEmailAddresses is the same as the
+    //      set up a number and see if method returns same
+    // mapEmailsToKeys takes a list of email addresses and a list of keys and
+    //      puts them together in a map
+    // sendTheEmails takes in the email/key map and sends out emails with the keys
+    //      * no idea how to test this one *
+
+
+
 }

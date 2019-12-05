@@ -35,7 +35,7 @@ public class SendSurveysFunction extends FunctionInitializer
         Map<String, String> emailKeyMap = new HashMap<String, String>();
         emailKeyMap = mapEmailsToKeys(emailAddresses, keys);
         System.out.println("   And Finally  - emailKeyMap: " + emailKeyMap);
-        // store keys in database
+        // store keys in database - aws rds using postgres using db.t2.micro
         // send some emails
         return msg;
     }
@@ -63,6 +63,12 @@ public class SendSurveysFunction extends FunctionInitializer
     }
 
     public int getTotalNumberOfAvailableEmailAddresses() {
+
+        int howMany = 170;  //replace this with a call to google groups
+        return howMany;
+    }
+
+    public int x() {
 
         int howMany = 170;  //replace this with a call to google groups
         return howMany;
