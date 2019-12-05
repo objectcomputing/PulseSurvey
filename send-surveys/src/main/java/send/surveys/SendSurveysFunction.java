@@ -64,7 +64,8 @@ public class SendSurveysFunction extends FunctionInitializer
 
      int getTotalNumberOfAvailableEmailAddresses() {
 
-        int howMany = 170;  //replace this with a call to google groups
+        int howMany = -1;
+        howMany = 170;  //replace this with a call to google groups
         return howMany;
     }
 
@@ -74,7 +75,6 @@ public class SendSurveysFunction extends FunctionInitializer
         int numberOfPairs = Math.min(emails.size(), keys.size());
 
         for (int i = 0; i < numberOfPairs; i++) {
-            // add email and key to map
             map.put(emails.get(i), keys.get(i));
         }
 
