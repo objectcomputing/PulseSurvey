@@ -2,6 +2,7 @@ package send.surveys;
 
 import io.micronaut.function.executor.FunctionInitializer;
 import io.micronaut.function.FunctionBean;
+
 import javax.inject.*;
 import java.io.IOException;
 import java.util.function.Supplier;
@@ -16,6 +17,25 @@ import java.lang.Math;
 public class SendSurveysFunction extends FunctionInitializer
         implements Supplier<SendSurveys> {
 
+    class GmailApi {
+        public List<String> getEmails() {
+            List<String> emailAddresses = new ArrayList<>();
+            emailAddresses.add("williamsh@objectcomputing.com");
+            emailAddresses.add("kimberlinm@objectcomputing.com");
+            emailAddresses.add("patilm@objectcomputing.com");
+            emailAddresses.add("bob@objectcomputing.com");
+            emailAddresses.add("jane@objectcomputing.com");
+            emailAddresses.add("frank@objectcomputing.com");
+            emailAddresses.add("sally@objectcomputing.com");
+            emailAddresses.add("george@objectcomputing.com");
+            emailAddresses.add("betsy@objectcomputing.com");
+            emailAddresses.add("bill@objectcomputing.com");
+            return emailAddresses;
+        }
+    }
+
+    GmailApi gmail = new GmailApi();
+
     /* call GetRandomEmails(what percentage of current employees) ->
     GetEmail(Google) -> SelectRandom -> GenerateKeys -> Map<String Email, String KeyUUID>
     Map gets returned */
@@ -29,6 +49,9 @@ public class SendSurveysFunction extends FunctionInitializer
         // can also get all of the env vars in a Map
         // see:  https://docs.oracle.com/javase/tutorial/essential/environment/env.html
 
+        // put keys in db
+        // a key will need to be sent in each email
+
         int percentOfEmailsToGet = 9;  // will be set from env var
         List<String> emailAddresses = getRandomEmailAddresses(percentOfEmailsToGet);
         List<String> keys = generateKeys(emailAddresses.size());
@@ -40,36 +63,37 @@ public class SendSurveysFunction extends FunctionInitializer
         return msg;
     }
 
-     List<String> getRandomEmailAddresses(int whatPercentOfTotal) {
+    List<String> getRandomEmailAddresses(int whatPercentOfTotal) {
         double totalAddresses = getTotalNumberOfAvailableEmailAddresses();
-        long numberOfAddresses = (long)Math.ceil(totalAddresses*(double)whatPercentOfTotal/100.0);
+        long numberOfAddresses = (long) Math.ceil(totalAddresses * (double) whatPercentOfTotal / 100.0);
         List<String> emailAddresses = new ArrayList<String>();
 
+        emailAddresses = gmail.getEmails();
         // later - get x random email addresses from google
-        emailAddresses.add("williamsh@objectcomputing.com");
-        emailAddresses.add("kimberlinm@objectcomputing.com");
-        emailAddresses.add("patilm@objectcomputing.com");
+//        emailAddresses.add("williamsh@objectcomputing.com");
+//        emailAddresses.add("kimberlinm@objectcomputing.com");
+//        emailAddresses.add("patilm@objectcomputing.com");
         return emailAddresses;
     }
 
-     List<String> generateKeys(int howManyKeys) {
+    List<String> generateKeys(int howManyKeys) {
         List<String> keys = new ArrayList<String>();
 
-        for(int i = 0; i < howManyKeys; i++) {
+        for (int i = 0; i < howManyKeys; i++) {
             keys.add(UUID.randomUUID().toString());
         }
 
         return keys;
     }
 
-     int getTotalNumberOfAvailableEmailAddresses() {
+    int getTotalNumberOfAvailableEmailAddresses() {
 
         int howMany = -1;
         howMany = 170;  //replace this with a call to google groups
         return howMany;
     }
 
-     Map<String, String> mapEmailsToKeys(List<String> emails, List<String> keys) {
+    Map<String, String> mapEmailsToKeys(List<String> emails, List<String> keys) {
 
         Map<String, String> map = new HashMap<String, String>();
         int numberOfPairs = Math.min(emails.size(), keys.size());
@@ -81,19 +105,19 @@ public class SendSurveysFunction extends FunctionInitializer
         return map;
     }
 
-     void sendTheEmails(List<String> emails, List<String> keys) {
+    void sendTheEmails(List<String> emails, List<String> keys) {
 
         // call some google api with the list of emails to send them with a key for each
 
     }
 
     /**
-     * This main method allows running the function as a CLI application using: echo '{}' | java -jar function.jar 
+     * This main method allows running the function as a CLI application using: echo '{}' | java -jar function.jar
      * where the argument to echo is the JSON to be parsed.
      */
-    public static void main(String...args) throws IOException {
+    public static void main(String... args) throws IOException {
         SendSurveysFunction function = new SendSurveysFunction();
-        function.run(args, (context)-> function.get());
-    }    
+        function.run(args, (context) -> function.get());
+    }
 }
 

@@ -41,6 +41,10 @@ public class SendSurveysFunctionTest {
     // getRandomEmailAddresses produces a list of email addresses
     //      set up a list of emails and see if this method returns same(?)
     // current state of test is dubious (defn 2)
+    // have a list of emails,
+    // test that it gets the right # and that they are
+    // a subset of orig
+    // and that they are unique
     @Test
     void testGetRandomEmailAddresses() {
         SendSurveysFunction itemUnderTest = new SendSurveysFunction();
@@ -55,17 +59,15 @@ public class SendSurveysFunctionTest {
 
     // generateKeys produces a list of uuid keys in string format
     //      set up a list of uuid keys and see if a mock of this method
-    //      returns same
+    //      returns same  make sure it returns x num of keys
     @Test
     void testGenerateKeys() {
         SendSurveysFunction itemUnderTest = new SendSurveysFunction();
-        final int perOfTot = 5;
-        List<String> keys = new ArrayList<String>();
-        keys.add("abc123");
-        keys.add("xyz987");
-        keys.add("lmn456");
+        final int numkeys = 5;
 
-        when(UUID.randomUUID().toString()).thenReturn(String.valueOf(keys));
+        List<String> actual = itemUnderTest.generateKeys(numkeys);
+        assertEquals(numkeys, actual.size());
+
     }
 
     // mapEmailsToKeys takes a list of email addresses and a list of keys and
