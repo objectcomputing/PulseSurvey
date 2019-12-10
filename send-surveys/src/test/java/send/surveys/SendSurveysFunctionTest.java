@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,22 +40,49 @@ public class SendSurveysFunctionTest {
     }
 
     // getRandomEmailAddresses produces a list of email addresses
-    //      set up a list of emails and see if this method returns same(?)
-    // current state of test is dubious (defn 2)
     // have a list of emails,
-    // test that it gets the right # and that they are
-    // a subset of orig
-    // and that they are unique
+    // test that it gets the right # and that they are 
     @Test
     void testGetRandomEmailAddresses() {
         SendSurveysFunction itemUnderTest = new SendSurveysFunction();
-        final int perOfTot = 5;
-        List<String> addresses = new ArrayList<String>();
-        addresses.add("williamsh@objectcomputing.com");
-        addresses.add("kimberlinm@objectcomputing.com");
-        addresses.add("patilm@objectcomputing.com");
+        final int percentOfEmailsNeeded = 5;
+        final int numberOfEmailsReturned = 10;
+        List<String> allAddresses = new ArrayList<String>();
 
-        assertEquals(addresses, itemUnderTest.getRandomEmailAddresses(perOfTot));
+        SendSurveysFunction.GmailApi gmailApiMock = mock(SendSurveysFunction.GmailApi.class);
+        allAddresses = gmailApiMock.getEmails();
+        assertEquals(numberOfEmailsReturned,
+                itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded).size());
+    }
+
+    // getRandomEmailAddresses produces a list of email addresses
+    // and that they are unique
+    @Test
+    void testGetRandomEmailAddresses_UniqueAddresses() {
+        SendSurveysFunction itemUnderTest = new SendSurveysFunction();
+        final int percentOfEmailsNeeded = 5;
+        final int numberOfEmailsReturned = 10;
+
+        assertEquals(numberOfEmailsReturned,
+                itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded).stream().distinct().count());
+    }
+
+    // getRandomEmailAddresses produces a list of email addresses
+    // a subset of orig    assertThat(actual, hasItems("b")); -or- assertThat(actual, contains("a", "b", "c"));
+    @Test
+    void testGetRandomEmailAddresses_SubsetOfOriginal() {
+        SendSurveysFunction itemUnderTest = new SendSurveysFunction();
+        final int percentOfEmailsNeeded = 5;
+        final int numberOfEmailsReturned = 10;
+        List<String> allAddresses = new ArrayList<String>();
+//        addresses.add("williamsh@objectcomputing.com");
+//        addresses.add("kimberlinm@objectcomputing.com");
+//        addresses.add("patilm@objectcomputing.com");
+
+        SendSurveysFunction.GmailApi gmailApiMock = mock(SendSurveysFunction.GmailApi.class);
+        allAddresses = gmailApiMock.getEmails();
+        assertEquals(numberOfEmailsReturned,
+                itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded).size());
     }
 
     // generateKeys produces a list of uuid keys in string format
