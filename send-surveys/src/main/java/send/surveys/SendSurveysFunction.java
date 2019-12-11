@@ -111,7 +111,8 @@ public class SendSurveysFunction extends FunctionInitializer
 
     void storeKeysInDb(List<String> keys) {
 
-        // call some google api with the list of emails to send them with a key for each
+        // connect to db
+        // store keys in keys table with time stamp issuedOn field in keys table
 
     }
 

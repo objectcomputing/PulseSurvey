@@ -1,24 +1,19 @@
 package send.surveys;
 
 import io.micronaut.test.annotation.MicronautTest;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import javax.inject.Inject;
 
-import java.util.ArrayList;
+import javax.inject.Inject;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 @MicronautTest
 public class SendSurveysFunctionTest {
@@ -109,11 +104,6 @@ public class SendSurveysFunctionTest {
 
         when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
         List<String> allAddresses = gmailApiMock.getEmails();
-//
-//        System.out.println("all addresses: ");
-//        allAddresses.stream().forEach(System.out::println);
-//        System.out.println("subset of addresses: ");
-//        itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded).stream().forEach(System.out::println);
 
         assertTrue(allAddresses.containsAll(itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded)));
     }
@@ -123,40 +113,56 @@ public class SendSurveysFunctionTest {
     //      returns same  make sure it returns x num of keys
     @Test
     void testGenerateKeys() {
-        SendSurveysFunction itemUnderTest = new SendSurveysFunction();
         final int numkeys = 5;
 
         List<String> actual = itemUnderTest.generateKeys(numkeys);
         assertEquals(numkeys, actual.size());
+    }
+
+    // mapEmailsToKeys takes a list of email addresses and a list of keys and
+    //      puts them together in a map
+    @Test
+    void testMapEmailsToKeys_CorrectNumber() {
+
+        List<String> fakeEmails = Arrays.asList("a@oci.com", "b@oci.com",
+                "c@oci.com", "d@oci.com","e@oci.com","f@oci.com","g@oci.com",
+                "h@oci.com","i@oci.com","j@oci.com", "k@oci.com","l@oci.com",
+                "m@oci.com", "n@oci.com");
+        List<String> fakeKeys = Arrays.asList("abc111", "xyz222",
+                "lmn333", "opq444","rst555","uvw6666","def777",
+                "ghi888","jkl999","aaa1010", "bbb1111","ccc1212",
+                "ddd1313", "eee1414");
+
+        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
+
+        assertEquals(fakeEmails.size(), itemUnderTest.mapEmailsToKeys(fakeEmails, fakeKeys).size());
 
     }
 
     // mapEmailsToKeys takes a list of email addresses and a list of keys and
     //      puts them together in a map
-    // check length
+    // check that the keys are all contained in the list that the mock was set up to return
     @Test
-    void testMapEmailsToKeys() {
-        SendSurveysFunction itemUnderTest = new SendSurveysFunction();
-        List<String> addresses = new ArrayList<String>();
-        addresses.add("williamsh@objectcomputing.com");
-        addresses.add("kimberlinm@objectcomputing.com");
-        addresses.add("patilm@objectcomputing.com");
-        List<String> keys = new ArrayList<String>();
-        keys.add("abc123");
-        keys.add("xyz987");
-        keys.add("lmn456");
+    void testMapEmailsToKeys_ContainsCorrectKeys() {
 
-        Map<String, String> map = new HashMap<String, String>();
+        List<String> fakeEmails = Arrays.asList("a@oci.com", "b@oci.com",
+                "c@oci.com", "d@oci.com","e@oci.com","f@oci.com","g@oci.com",
+                "h@oci.com","i@oci.com","j@oci.com", "k@oci.com","l@oci.com",
+                "m@oci.com", "n@oci.com");
+        List<String> fakeKeys = Arrays.asList("abc111", "xyz222",
+                "lmn333", "opq444","rst555","uvw6666","def777",
+                "ghi888","jkl999","aaa1010", "bbb1111","ccc1212",
+                "ddd1313", "eee1414");
 
-        for (int i = 0; i < 3; i++) {
-            map.put(addresses.get(i), keys.get(i));
-        }
+        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
 
-        assertEquals(map, itemUnderTest.mapEmailsToKeys(addresses, keys));
+        Map<String, String> map = itemUnderTest.mapEmailsToKeys(fakeEmails, fakeKeys);
 
+        assertTrue(fakeKeys.containsAll(itemUnderTest.mapEmailsToKeys(fakeEmails, fakeKeys).values()));
+        
     }
 
-    // storeKeysInDb takes in the list of keys and stores it in the db 
+    // storeKeysInDb takes in the list of keys and stores it in the db
     //      * no idea how to test this one *
     @Test
     void testStoreKeysInDb() {
