@@ -1,10 +1,13 @@
 package send.surveys;
 
 import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +24,24 @@ import static org.mockito.Mockito.*;
 public class SendSurveysFunctionTest {
 
     @Inject
-    SendSurveysClient client;
+    SendSurveysFunction itemUnderTest;
+
+    SendSurveysFunction.GmailApi gmailApiMock = mock(SendSurveysFunction.GmailApi.class);
+
+    @BeforeEach
+    void setupTest() {
+        itemUnderTest.setGmailApi(gmailApiMock);
+        reset(gmailApiMock);
+    }
 
     @Test
     void testFunction() throws Exception {
-        assertEquals("I'm gonna send surveys, eventually.", client.get().blockingGet().getName());
+        List<String> fakeEmails = Arrays.asList("a@oci.com", "b@oci.com",
+                "c@oci.com", "d@oci.com","e@oci.com","f@oci.com","g@oci.com",
+                "h@oci.com","i@oci.com","j@oci.com", "k@oci.com");
+        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
+
+        assertEquals("I'm gonna send surveys, eventually.", itemUnderTest.get().getName());
     }
 
     // getTotalNumberOfAvailableEmailAddresses is the same as the
@@ -33,25 +49,33 @@ public class SendSurveysFunctionTest {
 
     @Test
     void testGetTotalNumberOfAvailableEmailAddresses() {
-
-        // mock call to google api and return a number
-        SendSurveysFunction itemUnderTest = new SendSurveysFunction();
-        assertEquals(170, itemUnderTest.getTotalNumberOfAvailableEmailAddresses());
+        List<String> fakeEmails = Arrays.asList("a@oci.com", "b@oci.com",
+                "c@oci.com", "d@oci.com","e@oci.com","f@oci.com","g@oci.com",
+                "h@oci.com","i@oci.com","j@oci.com", "k@oci.com","l@oci.com","m@oci.com", "n@oci.com");
+        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
+        assertEquals(fakeEmails.size(), itemUnderTest.getTotalNumberOfAvailableEmailAddresses());
     }
 
     // getRandomEmailAddresses produces a list of email addresses
     // have a list of emails,
-    // test that it gets the right # and that they are 
-    @Test
-    void testGetRandomEmailAddresses() {
-        SendSurveysFunction itemUnderTest = new SendSurveysFunction();
-        final int percentOfEmailsNeeded = 5;
-        final int numberOfEmailsReturned = 10;
-        List<String> allAddresses = new ArrayList<String>();
+    // test that it gets the right # and that they are
 
-        SendSurveysFunction.GmailApi gmailApiMock = mock(SendSurveysFunction.GmailApi.class);
-        allAddresses = gmailApiMock.getEmails();
-        assertEquals(numberOfEmailsReturned,
+    @Test
+    void testGetRandomEmailAddresses_CorrectNumber() {
+        final int percentOfEmailsNeeded = 10;
+        List<String> fakeEmails = Arrays.asList("a@oci.com", "b@oci.com",
+                "c@oci.com", "d@oci.com","e@oci.com","f@oci.com","g@oci.com",
+                "h@oci.com","i@oci.com","j@oci.com", "k@oci.com","l@oci.com","m@oci.com", "n@oci.com");
+        final long numberOfEmailsToBeSent = (long) Math.ceil(fakeEmails.size() * (double) percentOfEmailsNeeded / 100.0);
+
+        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
+
+        System.out.println("numberOfEmailsToBeSent: " + numberOfEmailsToBeSent);
+
+        System.out.println("itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded).size(): " +
+                itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded).size());
+
+        assertEquals(numberOfEmailsToBeSent,
                 itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded).size());
     }
 
@@ -59,11 +83,16 @@ public class SendSurveysFunctionTest {
     // and that they are unique
     @Test
     void testGetRandomEmailAddresses_UniqueAddresses() {
-        SendSurveysFunction itemUnderTest = new SendSurveysFunction();
-        final int percentOfEmailsNeeded = 5;
-        final int numberOfEmailsReturned = 10;
+        final int percentOfEmailsNeeded = 10;
+        List<String> fakeEmails = Arrays.asList("a@oci.com", "b@oci.com",
+                "c@oci.com", "d@oci.com","e@oci.com","f@oci.com","g@oci.com",
+                "h@oci.com","i@oci.com","j@oci.com", "k@oci.com","l@oci.com",
+                "m@oci.com", "n@oci.com");
+        final long numberOfEmailsToBeSent = (long) Math.ceil(fakeEmails.size() * (double) percentOfEmailsNeeded / 100.0);
 
-        assertEquals(numberOfEmailsReturned,
+        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
+
+        assertEquals(numberOfEmailsToBeSent,
                 itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded).stream().distinct().count());
     }
 
@@ -71,18 +100,22 @@ public class SendSurveysFunctionTest {
     // a subset of orig    assertThat(actual, hasItems("b")); -or- assertThat(actual, contains("a", "b", "c"));
     @Test
     void testGetRandomEmailAddresses_SubsetOfOriginal() {
-        SendSurveysFunction itemUnderTest = new SendSurveysFunction();
-        final int percentOfEmailsNeeded = 5;
-        final int numberOfEmailsReturned = 10;
-        List<String> allAddresses = new ArrayList<String>();
-//        addresses.add("williamsh@objectcomputing.com");
-//        addresses.add("kimberlinm@objectcomputing.com");
-//        addresses.add("patilm@objectcomputing.com");
+        List<String> fakeEmails = Arrays.asList("a@oci.com", "b@oci.com",
+                "c@oci.com", "d@oci.com","e@oci.com","f@oci.com","g@oci.com",
+                "h@oci.com","i@oci.com","j@oci.com", "k@oci.com","l@oci.com",
+                "m@oci.com", "n@oci.com");
+        final int percentOfEmailsNeeded = 10;
+        final long numberOfEmailsToBeSent = (long) Math.ceil(fakeEmails.size() * (double) percentOfEmailsNeeded / 100.0);
 
-        SendSurveysFunction.GmailApi gmailApiMock = mock(SendSurveysFunction.GmailApi.class);
-        allAddresses = gmailApiMock.getEmails();
-        assertEquals(numberOfEmailsReturned,
-                itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded).size());
+        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
+        List<String> allAddresses = gmailApiMock.getEmails();
+//
+//        System.out.println("all addresses: ");
+//        allAddresses.stream().forEach(System.out::println);
+//        System.out.println("subset of addresses: ");
+//        itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded).stream().forEach(System.out::println);
+
+        assertTrue(allAddresses.containsAll(itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded)));
     }
 
     // generateKeys produces a list of uuid keys in string format
@@ -100,6 +133,7 @@ public class SendSurveysFunctionTest {
 
     // mapEmailsToKeys takes a list of email addresses and a list of keys and
     //      puts them together in a map
+    // check length
     @Test
     void testMapEmailsToKeys() {
         SendSurveysFunction itemUnderTest = new SendSurveysFunction();
@@ -119,6 +153,14 @@ public class SendSurveysFunctionTest {
         }
 
         assertEquals(map, itemUnderTest.mapEmailsToKeys(addresses, keys));
+
+    }
+
+    // storeKeysInDb takes in the list of keys and stores it in the db 
+    //      * no idea how to test this one *
+    @Test
+    void testStoreKeysInDb() {
+        //      * no idea how to test this one *
 
     }
 

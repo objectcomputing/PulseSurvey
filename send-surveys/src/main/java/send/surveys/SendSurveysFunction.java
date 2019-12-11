@@ -36,6 +36,10 @@ public class SendSurveysFunction extends FunctionInitializer
 
     GmailApi gmail = new GmailApi();
 
+    public void setGmailApi(GmailApi api) {
+        this.gmail = api;
+    }
+
     /* call GetRandomEmails(what percentage of current employees) ->
     GetEmail(Google) -> SelectRandom -> GenerateKeys -> Map<String Email, String KeyUUID>
     Map gets returned */
@@ -63,17 +67,20 @@ public class SendSurveysFunction extends FunctionInitializer
         return msg;
     }
 
-    List<String> getRandomEmailAddresses(int whatPercentOfTotal) {
+    List<String> getRandomEmailAddresses(int percentOfEmailsNeeded) {
         double totalAddresses = getTotalNumberOfAvailableEmailAddresses();
-        long numberOfAddresses = (long) Math.ceil(totalAddresses * (double) whatPercentOfTotal / 100.0);
+        long numberOfAddressesRequested = (long) Math.ceil(totalAddresses * (double) percentOfEmailsNeeded / 100.0);
         List<String> emailAddresses = new ArrayList<String>();
+        List<String> randomSubsetEmailAddresses = new ArrayList<String>();
 
         emailAddresses = gmail.getEmails();
+        // get random sampling of emails
         // later - get x random email addresses from google
-//        emailAddresses.add("williamsh@objectcomputing.com");
-//        emailAddresses.add("kimberlinm@objectcomputing.com");
-//        emailAddresses.add("patilm@objectcomputing.com");
-        return emailAddresses;
+        for (int i = 0; i < numberOfAddressesRequested; i++) {
+            randomSubsetEmailAddresses.add(emailAddresses.get(i));
+        }
+  //      return emailAddresses;
+        return randomSubsetEmailAddresses;
     }
 
     List<String> generateKeys(int howManyKeys) {
@@ -87,10 +94,7 @@ public class SendSurveysFunction extends FunctionInitializer
     }
 
     int getTotalNumberOfAvailableEmailAddresses() {
-
-        int howMany = -1;
-        howMany = 170;  //replace this with a call to google groups
-        return howMany;
+        return gmail.getEmails().size();
     }
 
     Map<String, String> mapEmailsToKeys(List<String> emails, List<String> keys) {
@@ -103,6 +107,12 @@ public class SendSurveysFunction extends FunctionInitializer
         }
 
         return map;
+    }
+
+    void storeKeysInDb(List<String> keys) {
+
+        // call some google api with the list of emails to send them with a key for each
+
     }
 
     void sendTheEmails(List<String> emails, List<String> keys) {
