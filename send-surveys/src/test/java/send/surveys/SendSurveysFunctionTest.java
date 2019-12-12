@@ -159,7 +159,7 @@ public class SendSurveysFunctionTest {
         Map<String, String> map = itemUnderTest.mapEmailsToKeys(fakeEmails, fakeKeys);
 
         assertTrue(fakeKeys.containsAll(itemUnderTest.mapEmailsToKeys(fakeEmails, fakeKeys).values()));
-        
+
     }
 
     // storeKeysInDb takes in the list of keys and stores it in the db
