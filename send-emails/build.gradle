@@ -1,4 +1,5 @@
 plugins {
+    id "jacoco"
     id "com.github.johnrengelman.shadow" version "5.0.0"
     id "jp.classmethod.aws.lambda" version "0.39"
     id "net.ltgt.apt-eclipse" version "0.21"
@@ -41,6 +42,14 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
     testRuntimeOnly "io.micronaut:micronaut-http-server-netty"
     testRuntimeOnly "io.micronaut:micronaut-function-web"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/jacocoHtml")
+    }
 }
 
 test.classpath += configurations.developmentOnly

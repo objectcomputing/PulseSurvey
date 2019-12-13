@@ -1,6 +1,7 @@
 matrix:
   include:
   - language: node_js
+    name: "front end"
     node_js:
     - node
     cache:
@@ -21,6 +22,7 @@ matrix:
       skip_cleanup: true
       region: us-east-2
   - language: java
+    name: "send-emails"
     jdk: openjdk11
     before_script:
     - cd send-emails
@@ -36,6 +38,7 @@ matrix:
       secret_access_key:
         secure: "LuIZ/lc0rGe7NbAmkzpeOkYtAAVoiJc9dSdYUAFmypxgSCqRqe8WWpQkGeAChGQl7TvI7MGU0Xpl6eskHJQAoWOMr8oWKcfrHhq0eq4aLm7+7bJvTuENp8vpNGxo+6qAv8SgJ4A57GNnRiaGScCORK1AdEMQenKJQhQlN6y5uphyKHndBJHUd9CL9/EwH1wMLOaWGiup6U2sItmndkC1fRAjvLGIgo+gF/nKfTeQ9POLy+wndvd4sc5pTTaj1l6oSeUEjasrTHIPrQ8aX8BZ6Z32nq3ahyDcJjFa/3PI1b5DD8grj/HFbX2XnOUKXxBiIChdtEhz9zMoNrWj1MtSWXxz+fcoXUB0fkCYW2y/UWVqy7HFy8Fz06Ima0RRMzfr53DXGq5c2Ogp4zFgwGDCvorpseCt8U1HGIQHMId8WaVBrYvwseRx9Rlsf5apKWM3K1JbMvB/xhl7vOo+1KpnLquOxCu6ghbBlpXiuBRdYWN3Q8VKQg3xVE08e+wJW3lgndIT5bN2SwuX5jj5SDF9kEXnGsQauO/06UyMNz2mAKatNQ9lUgUx9uvahcQR4wWvVVhquyOLa5MDQvEpEaXJGX6bLsisy+LmrVDezd46hAj1yTzf3rXXQc4oxJGv+rfIVmHS2RNsomsByeouaUxZkN0Y268EDlEXMkSXyyd6ySI="
   - language: java
+    name: "get-users"
     jdk: openjdk11
     before_script:
     - cd get-users
@@ -50,6 +53,7 @@ matrix:
     #  secret_access_key:
     #    secure: "LuIZ/lc0rGe7NbAmkzpeOkYtAAVoiJc9dSdYUAFmypxgSCqRqe8WWpQkGeAChGQl7TvI7MGU0Xpl6eskHJQAoWOMr8oWKcfrHhq0eq4aLm7+7bJvTuENp8vpNGxo+6qAv8SgJ4A57GNnRiaGScCORK1AdEMQenKJQhQlN6y5uphyKHndBJHUd9CL9/EwH1wMLOaWGiup6U2sItmndkC1fRAjvLGIgo+gF/nKfTeQ9POLy+wndvd4sc5pTTaj1l6oSeUEjasrTHIPrQ8aX8BZ6Z32nq3ahyDcJjFa/3PI1b5DD8grj/HFbX2XnOUKXxBiIChdtEhz9zMoNrWj1MtSWXxz+fcoXUB0fkCYW2y/UWVqy7HFy8Fz06Ima0RRMzfr53DXGq5c2Ogp4zFgwGDCvorpseCt8U1HGIQHMId8WaVBrYvwseRx9Rlsf5apKWM3K1JbMvB/xhl7vOo+1KpnLquOxCu6ghbBlpXiuBRdYWN3Q8VKQg3xVE08e+wJW3lgndIT5bN2SwuX5jj5SDF9kEXnGsQauO/06UyMNz2mAKatNQ9lUgUx9uvahcQR4wWvVVhquyOLa5MDQvEpEaXJGX6bLsisy+LmrVDezd46hAj1yTzf3rXXQc4oxJGv+rfIVmHS2RNsomsByeouaUxZkN0Y268EDlEXMkSXyyd6ySI="
   - language: java
+    name: "send-surveys"
     jdk: openjdk11
     before_script:
       - cd send-surveys
@@ -65,6 +69,7 @@ matrix:
       secret_access_key:
         secure: "LuIZ/lc0rGe7NbAmkzpeOkYtAAVoiJc9dSdYUAFmypxgSCqRqe8WWpQkGeAChGQl7TvI7MGU0Xpl6eskHJQAoWOMr8oWKcfrHhq0eq4aLm7+7bJvTuENp8vpNGxo+6qAv8SgJ4A57GNnRiaGScCORK1AdEMQenKJQhQlN6y5uphyKHndBJHUd9CL9/EwH1wMLOaWGiup6U2sItmndkC1fRAjvLGIgo+gF/nKfTeQ9POLy+wndvd4sc5pTTaj1l6oSeUEjasrTHIPrQ8aX8BZ6Z32nq3ahyDcJjFa/3PI1b5DD8grj/HFbX2XnOUKXxBiIChdtEhz9zMoNrWj1MtSWXxz+fcoXUB0fkCYW2y/UWVqy7HFy8Fz06Ima0RRMzfr53DXGq5c2Ogp4zFgwGDCvorpseCt8U1HGIQHMId8WaVBrYvwseRx9Rlsf5apKWM3K1JbMvB/xhl7vOo+1KpnLquOxCu6ghbBlpXiuBRdYWN3Q8VKQg3xVE08e+wJW3lgndIT5bN2SwuX5jj5SDF9kEXnGsQauO/06UyMNz2mAKatNQ9lUgUx9uvahcQR4wWvVVhquyOLa5MDQvEpEaXJGX6bLsisy+LmrVDezd46hAj1yTzf3rXXQc4oxJGv+rfIVmHS2RNsomsByeouaUxZkN0Y268EDlEXMkSXyyd6ySI="
   - language: java
+    name: "server"
     jdk: openjdk11
     before_script:
     - cd server
