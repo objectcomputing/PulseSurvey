@@ -20,16 +20,6 @@ public class SendSurveysFunction extends FunctionInitializer
     class GmailApi {
         public List<String> getEmails() {
             List<String> emailAddresses = new ArrayList<>();
-            emailAddresses.add("williamsh@objectcomputing.com");
-            emailAddresses.add("kimberlinm@objectcomputing.com");
-            emailAddresses.add("patilm@objectcomputing.com");
-            emailAddresses.add("bob@objectcomputing.com");
-            emailAddresses.add("jane@objectcomputing.com");
-            emailAddresses.add("frank@objectcomputing.com");
-            emailAddresses.add("sally@objectcomputing.com");
-            emailAddresses.add("george@objectcomputing.com");
-            emailAddresses.add("betsy@objectcomputing.com");
-            emailAddresses.add("bill@objectcomputing.com");
             return emailAddresses;
         }
     }
