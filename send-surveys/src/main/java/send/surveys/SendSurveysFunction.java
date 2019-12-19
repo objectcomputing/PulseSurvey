@@ -12,10 +12,13 @@ import java.util.UUID;
 import java.util.Map;
 import java.util.HashMap;
 import java.lang.Math;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @FunctionBean("send-surveys")
 public class SendSurveysFunction extends FunctionInitializer
         implements Supplier<SendSurveys> {
+    private static final Logger LOG = LoggerFactory.getLogger(SendSurveysFunction.class);
 
     class GmailApi {
         public List<String> getEmails() {
@@ -37,22 +40,25 @@ public class SendSurveysFunction extends FunctionInitializer
     public SendSurveys get() {
         SendSurveys msg = new SendSurveys();
         msg.setName("I'm gonna send surveys, eventually.");
+
         // to get aws environment vars:
         //  System.getenv("NAME_OF_YOUR_ENV_VARIABLE") // NOTE: getenv returns a string
-        //  int percentOfEmailsToGet = System.getenv("PercentOfEmailsToGet");
+        LOG.error("reading env var System.getenv(percentOfEmailsToGet): " + System.getenv("percentOfEmailsToGet"));
+        int percentOfEmailsToGet = Integer.parseInt(System.getenv("percentOfEmailsToGet"));
+        LOG.error("reading env var percentOfEmailsToGet: " + percentOfEmailsToGet);
         // can also get all of the env vars in a Map
         // see:  https://docs.oracle.com/javase/tutorial/essential/environment/env.html
-
-        // put keys in db
-        // a key will need to be sent in each email
-
-        int percentOfEmailsToGet = 9;  // will be set from env var
+//        int percentOfEmailsToGet = 9;  // will be set from env var
         List<String> emailAddresses = getRandomEmailAddresses(percentOfEmailsToGet);
         List<String> keys = generateKeys(emailAddresses.size());
         Map<String, String> emailKeyMap = new HashMap<String, String>();
         emailKeyMap = mapEmailsToKeys(emailAddresses, keys);
-        System.out.println("   And Finally  - emailKeyMap: " + emailKeyMap);
+        LOG.info("   And Finally  - emailKeyMap: " + emailKeyMap);
+
         // store keys in database - aws rds using postgres using db.t2.micro
+        // put keys in db
+        // a key will need to be sent in each email
+        storeKeysInDb(keys);
         // send some emails
         return msg;
     }

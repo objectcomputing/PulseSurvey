@@ -65,11 +65,6 @@ public class SendSurveysFunctionTest {
 
         when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
 
-        System.out.println("numberOfEmailsToBeSent: " + numberOfEmailsToBeSent);
-
-        System.out.println("itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded).size(): " +
-                itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded).size());
-
         assertEquals(numberOfEmailsToBeSent,
                 itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded).size());
     }
