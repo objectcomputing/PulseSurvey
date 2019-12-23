@@ -36,6 +36,7 @@ dependencies {
     compile group: 'joda-time', name: 'joda-time', version: '2.10.5'
     compile group: 'io.micronaut.data', name: 'micronaut-data-jdbc', version: '1.0.0.M5'
     compile group: 'io.micronaut.configuration', name: 'micronaut-hibernate-jpa', version: '1.2.3'
+    compile("org.postgresql:postgresql:9.4.1207")
     testAnnotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
     testCompile "org.mockito:mockito-core:2.+"

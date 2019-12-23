@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -163,6 +164,12 @@ public class SendSurveysFunctionTest {
     @Test
     void testStoreKeysInDb() {
         //      * no idea how to test this one *
+        List<String> fakeKeys = Arrays.asList("abc111", "xyz222",
+                "lmn333", "opq444");
+
+//        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
+
+        assertNotNull(itemUnderTest.storeKeysInDb(fakeKeys));
 
     }
 
