@@ -36,7 +36,8 @@ public class SendSurveysFunctionTest {
                 "h@oci.com","i@oci.com","j@oci.com", "k@oci.com");
         when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
 
-        assertEquals("I'm gonna send surveys, eventually.", itemUnderTest.get().getName());
+        assertEquals("I'm gonna send 8% of surveys, eventually.", itemUnderTest.get().getName());
+        int x =1;
     }
 
     // getTotalNumberOfAvailableEmailAddresses is the same as the

@@ -110,6 +110,22 @@ public class SendSurveysFunction extends FunctionInitializer
         // connect to db
         // store keys in keys table with time stamp issuedOn field in keys table
 
+/*
+        Following is a guide on Working with DB Security Groups:
+        http://docs.amazonwebservices.com/AmazonRDS/latest/UserGuide/USER_WorkingWithSecurityGroups.html
+
+        Here is some sample code for a JDBC connector for mysql:
+        String url = "jdbc:mysql://dbname.test.us-east-1.rds.amazonaws.com:3306/";
+        String userName = "your_user_name";
+        String password = "your_password";
+        String dbName = "your_db_name";
+        String driver = "com.mysql.jdbc.Driver";
+        Connection connection = DriverManager.getConnection(url + dbName, userName, password);
+
+        The Amazon RDS API Refence is available here:
+        http://docs.amazonwebservices.com/AmazonRDS/latest/APIReference/Welcome.html?r=6650
+*/
+
     }
 
     void sendTheEmails(List<String> emails, List<String> keys) {
