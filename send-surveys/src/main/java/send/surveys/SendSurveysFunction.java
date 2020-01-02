@@ -1,17 +1,15 @@
 package send.surveys;
 
 import io.micronaut.function.executor.FunctionInitializer;
+import model.ResponseKey;
+import repositories.ResponseKeyRepository;
 import io.micronaut.function.FunctionBean;
 
 import javax.inject.*;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.function.Supplier;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.UUID;
 import java.util.Map;
 import java.util.HashMap;
 import java.lang.Math;
@@ -23,9 +21,17 @@ public class SendSurveysFunction extends FunctionInitializer
         implements Supplier<SendSurveys> {
     private static final Logger LOG = LoggerFactory.getLogger(SendSurveysFunction.class);
 
+    @Inject
+    private ResponseKeyRepository responseKeyRepo;
+
     class GmailApi {
         public List<String> getEmails() {
             List<String> emailAddresses = new ArrayList<>();
+            emailAddresses.add("a@oci.com");
+            emailAddresses.add("b@oci.com");
+            emailAddresses.add("c@oci.com");
+            emailAddresses.add("d@oci.com");
+            emailAddresses.add("e@oci.com");
             return emailAddresses;
         }
     }
@@ -52,16 +58,15 @@ public class SendSurveysFunction extends FunctionInitializer
         // can also get all of the env vars in a Map
         // see:  https://docs.oracle.com/javase/tutorial/essential/environment/env.html
 //        int percentOfEmailsToGet = 9;  // will be set from env var
+        LOG.info("Grabbing email addresses.");
         List<String> emailAddresses = getRandomEmailAddresses(percentOfEmailsToGet);
-        List<String> keys = generateKeys(emailAddresses.size());
+        LOG.info("Generating keys.");
+        List<ResponseKey> keys = generateKeys(emailAddresses.size());
+        LOG.info("Mapping emails to keys.");
         Map<String, String> emailKeyMap = new HashMap<String, String>();
         emailKeyMap = mapEmailsToKeys(emailAddresses, keys);
         LOG.info("   And Finally  - emailKeyMap: " + emailKeyMap);
 
-        // store keys in database - aws rds using postgres using db.t2.micro
-        // put keys in db
-        // a key will need to be sent in each email
-        storeKeysInDb(keys);
         // send some emails
         return msg;
     }
@@ -82,68 +87,34 @@ public class SendSurveysFunction extends FunctionInitializer
         return randomSubsetEmailAddresses;
     }
 
-    List<String> generateKeys(int howManyKeys) {
-        List<String> keys = new ArrayList<String>();
+    List<ResponseKey> generateKeys(int howManyKeys) {
+        
+        List<ResponseKey> keys = new ArrayList<ResponseKey>();
 
         for (int i = 0; i < howManyKeys; i++) {
-            keys.add(UUID.randomUUID().toString());
+            keys.add(new ResponseKey());
         }
+        LOG.info("Storing empty keys.");
+        List<ResponseKey> returned = responseKeyRepo.saveAll(keys);
+        LOG.info("Keys stored.");
 
-        return keys;
+        return returned;
     }
 
     int getTotalNumberOfAvailableEmailAddresses() {
         return gmail.getEmails().size();
     }
 
-    Map<String, String> mapEmailsToKeys(List<String> emails, List<String> keys) {
+    Map<String, String> mapEmailsToKeys(List<String> emails, List<ResponseKey> keys) {
 
         Map<String, String> map = new HashMap<String, String>();
         int numberOfPairs = Math.min(emails.size(), keys.size());
 
         for (int i = 0; i < numberOfPairs; i++) {
-            map.put(emails.get(i), keys.get(i));
+            map.put(emails.get(i), keys.get(i).getResponseKey().toString());
         }
 
         return map;
-    }
-
-    Connection storeKeysInDb(List<String> keys) {
-
-        // connect to db
-        // store keys in keys table with time stamp issuedOn field in keys table
-
-        Connection connection = null;
-        String url = "jdbc:postgresql://pulsesurveydb.ca4gwn3eiebi.us-east-1.rds.amazonaws.com:5432/pulsesurveydb";
-
-        String userName = "pulsesurvey";
-        String password = "surveyadmin321";
-        String dbName = "pulsesurveydb";
- //       String driver = "com.mysql.jdbc.Driver";
-        try {
-            connection = DriverManager.getConnection(url, userName, password);
-            LOG.error("Database connection success! " );
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        /*
-        Following is a guide on Working with DB Security Groups:
-        http://docs.amazonwebservices.com/AmazonRDS/latest/UserGuide/USER_WorkingWithSecurityGroups.html
-
-        Here is some sample code for a JDBC connector for mysql:
-        String url = "jdbc:mysql://dbname.test.us-east-1.rds.amazonaws.com:3306/";
-        pulsesurveydb.ca4gwn3eiebi.us-east-1.rds.amazonaws.com:5432
-        String userName = "your_user_name";
-        String password = "your_password";
-        String dbName = "your_db_name";
-        String driver = "com.mysql.jdbc.Driver";
-        Connection connection = DriverManager.getConnection(url + dbName, userName, password);
-
-        The Amazon RDS API Refence is available here:
-        http://docs.amazonwebservices.com/AmazonRDS/latest/APIReference/Welcome.html?r=6650
-*/
-        return connection;
     }
 
     void sendTheEmails(List<String> emails, List<String> keys) {
