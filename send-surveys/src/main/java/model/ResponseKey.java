@@ -1,5 +1,6 @@
 package model;
 
+import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.DateCreated;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class ResponseKey {
 
     @Id
     @Column(name="responsekey")
-    @GeneratedValue
+    @AutoPopulated
     private UUID responseKey;
 
     @Column(name="issuedon")
