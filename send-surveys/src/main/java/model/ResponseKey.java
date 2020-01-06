@@ -5,7 +5,6 @@ import io.micronaut.data.annotation.DateCreated;
 
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
