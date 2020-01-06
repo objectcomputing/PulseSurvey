@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import org.junitpioneer.jupiter.SystemPropertyExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
@@ -29,6 +31,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SystemPropertyExtension.class)
 @MicronautTest
 public class SendSurveysFunctionTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SendSurveysFunctionTest.class);
 
     @Inject
     SendSurveysFunction itemUnderTest;
@@ -62,9 +66,11 @@ public class SendSurveysFunctionTest {
     @Test
     @SetSystemProperty(key="PERCENT_OF_EMAILS", value="10")
     void testFunctionGet_ReportsCorrectNumber() {
-        List<String> fakeEmails = generateEmails((int)Math.random()%50);
+        List<String> fakeEmails = generateEmails((int)(Math.random()*100)%50);
+        LOG.info("Using addresses: "+ fakeEmails.size());
         final int numberOfEmailsToBeSent = (int) Math
                 .ceil(fakeEmails.size() * (double) PERCENT_OF_EMAILS / 100.0);
+        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
         
         SendSurveys sent = itemUnderTest.get();
         assertThat(sent.getName(), containsString("Sent surveys:"));
@@ -77,7 +83,8 @@ public class SendSurveysFunctionTest {
      **/
     @Test
     void testGetTotalNumberOfAvailableEmailAddresses() {
-        List<String> fakeEmails = generateEmails((int)Math.random()%50);
+        List<String> fakeEmails = generateEmails((int)(Math.random()*100)%50);
+        LOG.info("Using addresses: "+ fakeEmails.size());
         when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
         assertEquals(fakeEmails.size(), itemUnderTest.getTotalNumberOfAvailableEmailAddresses());
     }
@@ -88,7 +95,8 @@ public class SendSurveysFunctionTest {
     @Test
     void testGetRandomEmailAddresses_CorrectNumber() {
         final int percentOfEmailsNeeded = 10;
-        List<String> fakeEmails = generateEmails((int)Math.random()%50);
+        List<String> fakeEmails = generateEmails((int)(Math.random()*100)%50);
+        LOG.info("Using addresses: "+ fakeEmails.size());
         final long numberOfEmailsToBeSent = (long) Math
                 .ceil(fakeEmails.size() * (double) percentOfEmailsNeeded / 100.0);
 
@@ -102,7 +110,8 @@ public class SendSurveysFunctionTest {
     @Test
     void testGetRandomEmailAddresses_UniqueAddresses() {
         final int percentOfEmailsNeeded = 10;
-        List<String> fakeEmails = generateEmails((int)Math.random()%50);
+        List<String> fakeEmails = generateEmails((int)(Math.random()*100)%50);
+        LOG.info("Using addresses: "+ fakeEmails.size());
         final long numberOfEmailsToBeSent = (long) Math
                 .ceil(fakeEmails.size() * (double) percentOfEmailsNeeded / 100.0);
 
@@ -117,7 +126,8 @@ public class SendSurveysFunctionTest {
     // contains("a", "b", "c"));
     @Test
     void testGetRandomEmailAddresses_SubsetOfOriginal() {
-        List<String> fakeEmails = generateEmails((int)Math.random()%50);
+        List<String> fakeEmails = generateEmails((int)(Math.random()*100)%50);
+        LOG.info("Using addresses: "+ fakeEmails.size());
         final int percentOfEmailsNeeded = 10;
 
         when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
@@ -131,7 +141,8 @@ public class SendSurveysFunctionTest {
     // returns same make sure it returns x num of keys
     @Test
     void testGenerateKeys() {
-        final int numkeys = (int)Math.random()%100;
+        final int numkeys = (int)(Math.random()*100)%100;
+        LOG.info("Generating keys: "+ numkeys);
 
         List<ResponseKey> actual = itemUnderTest.generateKeys(numkeys);
         assertEquals(numkeys, actual.size());
@@ -141,7 +152,8 @@ public class SendSurveysFunctionTest {
     // puts them together in a map
     @Test
     void testMapEmailsToKeys_CorrectNumber() {
-        int numberOfEmails = (int)Math.random()%50;
+        int numberOfEmails = (int)(Math.random()*100)%50;
+        LOG.info("Mapping emails: "+ numberOfEmails);
         List<String> fakeEmails = generateEmails(numberOfEmails);
         List<ResponseKey> fakeKeys = generateResponseKeys(numberOfEmails);
 
@@ -156,7 +168,8 @@ public class SendSurveysFunctionTest {
     // return
     @Test
     void testMapEmailsToKeys_ContainsCorrectKeys() {
-        int numberOfEmails = (int)Math.random()%50;
+        int numberOfEmails = (int)(Math.random()*100)%50;
+        LOG.info("Mapping emails: "+ numberOfEmails);
         List<String> fakeEmails = generateEmails(numberOfEmails);
         List<ResponseKey> fakeKeys = generateResponseKeys(numberOfEmails);
         

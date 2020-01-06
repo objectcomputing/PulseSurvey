@@ -37,7 +37,6 @@ public class SystemPropertyExtension implements BeforeAllCallback, BeforeEachCal
 
 	@Override
 	public void beforeEach(ExtensionContext context) throws Exception {
-		System.out.println("Checking for System Property Extension annotations.");
 		if (annotationsPresentOnTestMethod(context)) {
 			handleSystemProperties(context);
 		}
@@ -55,7 +54,6 @@ public class SystemPropertyExtension implements BeforeAllCallback, BeforeEachCal
 	}
 
 	private void handleSystemProperties(ExtensionContext context) {
-		System.out.println("Handling System Properties.");
 		Set<String> propertiesToClear;
 		Map<String, String> propertiesToSet;
 		try {
@@ -71,7 +69,6 @@ public class SystemPropertyExtension implements BeforeAllCallback, BeforeEachCal
 		catch (IllegalStateException ex) {
 			throw new ExtensionConfigurationException("Don't clear/set the same property more than once.", ex);
 		}
-		System.out.println(propertiesToSet);
 		storeOriginalSystemProperties(context, propertiesToClear, propertiesToSet.keySet());
 		clearSystemProperties(propertiesToClear);
 		setSystemProperties(propertiesToSet);
