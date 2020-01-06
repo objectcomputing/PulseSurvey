@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -135,35 +136,16 @@ public class SendSurveysFunctionTest {
     // return
     @Test
     void testMapEmailsToKeys_ContainsCorrectKeys() {
-        /*
-         * List<String> fakeEmails = Arrays.asList("a@oci.com", "b@oci.com",
-         * "c@oci.com", "d@oci.com","e@oci.com","f@oci.com","g@oci.com",
-         * "h@oci.com","i@oci.com","j@oci.com", "k@oci.com","l@oci.com", "m@oci.com",
-         * "n@oci.com"); List<String> fakeKeys = Arrays.asList("abc111", "xyz222",
-         * "lmn333", "opq444","rst555","uvw6666","def777", "ghi888","jkl999","aaa1010",
-         * "bbb1111","ccc1212", "ddd1313", "eee1414");
-         * 
-         * when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
-         * 
-         * Map<String, String> map = itemUnderTest.mapEmailsToKeys(fakeEmails,
-         * fakeKeys);
-         * 
-         * assertTrue(fakeKeys.containsAll(itemUnderTest.mapEmailsToKeys(fakeEmails,
-         * fakeKeys).values()));
-         */
-    }
-
-    // storeKeysInDb takes in the list of keys and stores it in the db
-    // * no idea how to test this one *
-    @Test
-    void testStoreKeysInDb() {
-        // * no idea how to test this one *
-        //List<String> fakeKeys = Arrays.asList("abc111", "xyz222", "lmn333", "opq444");
-
-        // when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
-
-        // assertNotNull(itemUnderTest.storeKeysInDb(fakeKeys));
-
+        int numberOfEmails = (int)Math.random()%50;
+        List<String> fakeEmails = generateEmails(numberOfEmails);
+        List<ResponseKey> fakeKeys = generateResponseKeys(numberOfEmails);
+        
+        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
+        
+        Map<String, String> map = itemUnderTest.mapEmailsToKeys(fakeEmails,
+        fakeKeys);
+        
+        assertTrue(map.keySet().containsAll(fakeEmails));
     }
 
     // sendTheEmails takes in the email/key map and sends out emails with the keys
