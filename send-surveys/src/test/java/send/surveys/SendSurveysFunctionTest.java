@@ -6,6 +6,9 @@ import net.bytebuddy.utility.RandomString;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junitpioneer.jupiter.SetSystemProperty;
+import org.junitpioneer.jupiter.SystemPropertyExtension;
 
 import javax.inject.Inject;
 
@@ -17,10 +20,13 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(SystemPropertyExtension.class)
 @MicronautTest
 public class SendSurveysFunctionTest {
 
@@ -49,6 +55,20 @@ public class SendSurveysFunctionTest {
             toReturn.add(new ResponseKey(UUID.randomUUID(), LocalDateTime.now()));
         }
         return toReturn;
+    }
+
+    static final int PERCENT_OF_EMAILS = 10;
+
+    @Test
+    @SetSystemProperty(key="PERCENT_OF_EMAILS", value="10")
+    void testFunctionGet_ReportsCorrectNumber() {
+        List<String> fakeEmails = generateEmails((int)Math.random()%50);
+        final int numberOfEmailsToBeSent = (int) Math
+                .ceil(fakeEmails.size() * (double) PERCENT_OF_EMAILS / 100.0);
+        
+        SendSurveys sent = itemUnderTest.get();
+        assertThat(sent.getName(), containsString("Sent surveys:"));
+        assertThat(sent.getName(), containsString("Sent surveys: "+numberOfEmailsToBeSent));
     }
 
     /**

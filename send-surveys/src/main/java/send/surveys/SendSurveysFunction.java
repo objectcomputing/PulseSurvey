@@ -47,14 +47,13 @@ public class SendSurveysFunction extends FunctionInitializer
     Map gets returned */
     @Override
     public SendSurveys get() {
-        SendSurveys msg = new SendSurveys();
 
         // to get aws environment vars:
         //  System.getenv("NAME_OF_YOUR_ENV_VARIABLE") // NOTE: getenv returns a string
-        LOG.error("Reading env var System.getenv(PERCENT_OF_EMAILS): " + System.getenv("PERCENT_OF_EMAILS"));
-        int percentOfEmailsToGet = Integer.parseInt(System.getenv("PERCENT_OF_EMAILS"));
+        LOG.error("Reading env var System.getProperty(PERCENT_OF_EMAILS): " + System.getProperty("PERCENT_OF_EMAILS"));
+        int percentOfEmailsToGet = Integer.parseInt(System.getProperty("PERCENT_OF_EMAILS"));
         LOG.error("Reading env var percentOfEmailsToGet: " + percentOfEmailsToGet);
-        msg.setName("I'm gonna send "+percentOfEmailsToGet+"% of surveys, eventually.");
+
         // can also get all of the env vars in a Map
         // see:  https://docs.oracle.com/javase/tutorial/essential/environment/env.html
 //        int percentOfEmailsToGet = 9;  // will be set from env var
@@ -68,7 +67,7 @@ public class SendSurveysFunction extends FunctionInitializer
         LOG.info("   And Finally  - emailKeyMap: " + emailKeyMap);
 
         // send some emails
-        return msg;
+        return new SendSurveys("Sent surveys: " + emailKeyMap.size());
     }
 
     List<String> getRandomEmailAddresses(int percentOfEmailsNeeded) {
