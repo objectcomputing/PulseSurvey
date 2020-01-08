@@ -86,9 +86,11 @@ public class templateManagerTest {
 
         UUID uuid = UUID.randomUUID();
         String stringUuid = uuid.toString();
+        String templateFileName = "emailTemplate.st";
+
         SurveyTemplateManager stm = new SurveyTemplateManager();
 
-        String html = stm.putKeyInTemplate(uuid);
+        String html = stm.putKeyInTemplate(uuid, templateFileName);
 
         assertThat(html, containsString(stringUuid));
         String s = "Just a breakpoint";

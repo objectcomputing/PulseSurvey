@@ -22,14 +22,14 @@ public class SurveyTemplateManager {
     }
 
     // some meth to put stuff in the mustache
-    public String putKeyInTemplate(UUID uuid) {
+    public String putKeyInTemplate(UUID uuid, String templateFileName) {
 
         String stringUuid = uuid.toString();
         Map<String, String> map = new HashMap<>();
         map.put("surveyKey", stringUuid);
 
         SurveyTemplateManager stm = new SurveyTemplateManager();
-        Mustache m = stm.getMustache("emailTemplate.st");
+        Mustache m = stm.getMustache(templateFileName);
 
         StringWriter writer = new StringWriter();
         try {
