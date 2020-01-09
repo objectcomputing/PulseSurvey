@@ -4,6 +4,7 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -14,26 +15,26 @@ import java.util.UUID;
 @Singleton
 public class SurveyTemplateManager {
 
+    private final MustacheFactory factory;
+
+    @Inject
+    public SurveyTemplateManager(MustacheFactory factory) {
+        this.factory = factory;
+    }
+
     public Mustache getMustache(String mustacheFileName){
-        MustacheFactory mf = new DefaultMustacheFactory();
- //       Mustache m = mf.compile("test.mustache");
-        Mustache m = mf.compile(mustacheFileName);
+        Mustache m = factory.compile(mustacheFileName);
         return m;
     }
 
-    // some meth to put stuff in the mustache
-    public String putKeyInTemplate(UUID uuid, String templateFileName) {
+    // put stuff in the mustache template
+    public String populateTemplate(String templateFileName, Map<String, Object> data) {
 
-        String stringUuid = uuid.toString();
-        Map<String, String> map = new HashMap<>();
-        map.put("surveyKey", stringUuid);
-
-        SurveyTemplateManager stm = new SurveyTemplateManager();
-        Mustache m = stm.getMustache(templateFileName);
+        Mustache m = getMustache(templateFileName);
 
         StringWriter writer = new StringWriter();
         try {
-            m.execute(writer, map).flush();
+            m.execute(writer, data).flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
