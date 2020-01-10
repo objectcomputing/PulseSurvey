@@ -1,4 +1,4 @@
-package templateManager;
+package template.mgr;
 
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.MustacheFactory;

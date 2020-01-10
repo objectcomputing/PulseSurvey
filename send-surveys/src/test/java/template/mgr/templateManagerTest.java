@@ -15,10 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
-import templateManager.SurveyTemplateManager;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @MicronautTest
 public class templateManagerTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(templateManagerTest.class);
 
     @Inject
     SurveyTemplateManager objectUnderTest;
@@ -44,7 +48,7 @@ public class templateManagerTest {
         try {
             html = objectUnderTest.populateTemplate(templateFileName, map);
         } catch (IOException e) {
-            e.printStackTrace();  //todo log this
+            LOG.error("IOException for: "+ templateFileName + " " + e.getMessage());
         }
 
         assertThat(html, containsString(stringUuid));
