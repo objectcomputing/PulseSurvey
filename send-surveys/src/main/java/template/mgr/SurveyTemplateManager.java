@@ -20,7 +20,7 @@ public class SurveyTemplateManager {
     }
 
     public Mustache getMustache(String mustacheFileName) {
-        
+
         return factory.compile(mustacheFileName);
     }
 
