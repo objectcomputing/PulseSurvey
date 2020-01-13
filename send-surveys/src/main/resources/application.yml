@@ -2,3 +2,12 @@ micronaut:
   function:
     name: send-surveys
 root: src/main/resources
+
+---
+  datasources:
+    default:
+      url: jdbc:postgresql://pulsesurveydb.ca4gwn3eiebi.us-east-1.rds.amazonaws.com:5432/pulsesurveydb
+      driverClassName: org.postgresql.Driver
+      username: pulsesurvey
+      password: 'surveyadmin321'
+      dialect: POSTGRES

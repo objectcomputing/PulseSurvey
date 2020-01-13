@@ -7,6 +7,12 @@ public class SendSurveys {
 
     private String name;
 
+    public SendSurveys() {}
+
+    public SendSurveys(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
@@ -15,4 +21,3 @@ public class SendSurveys {
         this.name = name;
     }
 }
-
