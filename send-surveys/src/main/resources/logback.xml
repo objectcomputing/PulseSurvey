@@ -12,12 +12,6 @@
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
-<!--    <root level="debug">-->
-<!--        <appender-ref ref="STDOUT" />-->
-<!--    </root>-->
-
-<!--    <root level="error">-->
-<!--        <appender-ref ref="STDOUT" />-->
-<!--    </root>-->
     <logger name="send.surveys" level="info"/>
+    <logger name="template.mgr" level="INFO"/>
 </configuration>

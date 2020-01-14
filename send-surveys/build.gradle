@@ -21,11 +21,11 @@ configurations {
     developmentOnly 
 }
 
-dependencies {    
-    implementation platform("io.micronaut:micronaut-bom:$micronautVersion")     
+dependencies {
+    implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     testAnnotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
-        
+
     annotationProcessor "io.micronaut:micronaut-inject-java"
     annotationProcessor "io.micronaut:micronaut-graal"
     annotationProcessor "io.micronaut:micronaut-validation"
@@ -52,10 +52,11 @@ dependencies {
 
     implementation "io.micronaut:micronaut-function-aws:1.3.6"
     runtimeOnly "com.amazonaws:aws-lambda-java-log4j2:1.0.0"
-    
+
     compile 'io.micronaut.data:micronaut-data-jdbc:1.0.0.M5'
+    compile  'com.github.spullara.mustache.java:compiler:0.9.6'
     runtime group: 'org.postgresql', name: 'postgresql', version: '42.2.9'
-    compile group: 'joda-time', name: 'joda-time', version: '2.10.5'
+    compile 'joda-time:joda-time:2.10.5'
     compile("org.postgresql:postgresql:9.4.1207")
     testCompile "org.mockito:mockito-core:2.+"
     testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: '1.3'

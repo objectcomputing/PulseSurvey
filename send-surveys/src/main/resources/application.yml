@@ -1,6 +1,8 @@
 micronaut:
   function:
     name: send-surveys
+root: src/main/resources
+
 ---
   datasources:
     default:
