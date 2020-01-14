@@ -24,7 +24,7 @@ public class SurveyTemplateManager {
         return factory.compile(mustacheFileName);
     }
 
-    public String populateTemplate(String templateFileName, Map<String, Object> data)
+    public String populateTemplate(String templateFileName, Object data)
             throws IOException {
 
         StringWriter writer = new StringWriter();
