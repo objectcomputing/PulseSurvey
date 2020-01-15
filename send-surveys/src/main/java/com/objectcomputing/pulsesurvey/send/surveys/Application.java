@@ -1,4 +1,4 @@
-package send.surveys;
+package com.objectcomputing.pulsesurvey.send.surveys;
 
 import io.micronaut.runtime.Micronaut;
 
