@@ -13,13 +13,16 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.lang.Math;
+
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@FunctionBean("send-surveys")
-public class SendSurveysFunction extends FunctionInitializer
-        implements Supplier<SendSurveys> {
-    private static final Logger LOG = LoggerFactory.getLogger(SendSurveysFunction.class);
+//@FunctionBean("send-surveys")
+@Controller("/sendEmails")
+public class SendSurveysController {
+    private static final Logger LOG = LoggerFactory.getLogger(SendSurveysController.class);
 
     @Inject
     private ResponseKeyRepository responseKeyRepo;
@@ -45,18 +48,16 @@ public class SendSurveysFunction extends FunctionInitializer
     /* call GetRandomEmails(what percentage of current employees) ->
     GetEmail(Google) -> SelectRandom -> GenerateKeys -> Map<String Email, String KeyUUID>
     Map gets returned */
-    @Override
-    public SendSurveys get() {
+
+    @Get("/{percentOfEmails}")
+    public SendSurveys get(String percentOfEmails) {
 
         // to get aws environment vars:
         //  System.getenv("NAME_OF_YOUR_ENV_VARIABLE") // NOTE: getenv returns a string
-        LOG.error("Reading env var System.getProperty(PERCENT_OF_EMAILS): " + System.getProperty("PERCENT_OF_EMAILS"));
-        int percentOfEmailsToGet = Integer.parseInt(System.getProperty("PERCENT_OF_EMAILS"));
-        LOG.error("Reading env var percentOfEmailsToGet: " + percentOfEmailsToGet);
+        LOG.info("Reading percentOfEmails: " + percentOfEmails);
+        int percentOfEmailsToGet = Integer.parseInt(percentOfEmails);
+        LOG.info("Reading env var percentOfEmailsToGet: " + percentOfEmailsToGet);
 
-        // can also get all of the env vars in a Map
-        // see:  https://docs.oracle.com/javase/tutorial/essential/environment/env.html
-//        int percentOfEmailsToGet = 9;  // will be set from env var
         LOG.info("Grabbing email addresses.");
         List<String> emailAddresses = getRandomEmailAddresses(percentOfEmailsToGet);
         LOG.info("Generating keys.");
@@ -72,7 +73,9 @@ public class SendSurveysFunction extends FunctionInitializer
 
     List<String> getRandomEmailAddresses(int percentOfEmailsNeeded) {
         double totalAddresses = getTotalNumberOfAvailableEmailAddresses();
+        LOG.info("totalAddresses: " + totalAddresses);
         long numberOfAddressesRequested = (long) Math.ceil(totalAddresses * (double) percentOfEmailsNeeded / 100.0);
+        LOG.info("numberOfAddressesRequested: " + numberOfAddressesRequested);
         List<String> emailAddresses = new ArrayList<String>();
         List<String> randomSubsetEmailAddresses = new ArrayList<String>();
 
@@ -122,13 +125,5 @@ public class SendSurveysFunction extends FunctionInitializer
 
     }
 
-    /**
-     * This main method allows running the function as a CLI application using: echo '{}' | java -jar function.jar
-     * where the argument to echo is the JSON to be parsed.
-     */
-    public static void main(String... args) throws IOException {
-        SendSurveysFunction function = new SendSurveysFunction();
-        function.run(args, (context) -> function.get());
-    }
 }
 
