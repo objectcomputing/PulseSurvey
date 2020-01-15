@@ -1,4 +1,4 @@
-package model;
+package com.objectcomputing.pulsesurvey.model;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.DateCreated;

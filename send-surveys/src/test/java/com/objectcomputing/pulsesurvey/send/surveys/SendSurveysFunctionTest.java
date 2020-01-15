@@ -1,7 +1,7 @@
-package send.surveys;
+package com.objectcomputing.pulsesurvey.send.surveys;
 
 import io.micronaut.test.annotation.MicronautTest;
-import model.ResponseKey;
+import com.objectcomputing.pulsesurvey.model.ResponseKey;
 import net.bytebuddy.utility.RandomString;
 
 import org.junit.jupiter.api.BeforeEach;

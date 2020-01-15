@@ -1,4 +1,4 @@
-package model;
+package com.objectcomputing.pulsesurvey.model;
 
 import io.micronaut.data.annotation.Id;
 import org.joda.time.DateTimeZone;
@@ -6,26 +6,26 @@ import org.joda.time.DateTimeZone;
 import javax.persistence.Column;
 import java.util.UUID;
 
-public class Response {
+public class UserComments {
 
     @Id
-    private UUID responseId;
+    private UUID commentId;
 
     @Column
     private UUID responseKey;
 
     @Column
-    private int selected;
+    private String commentText;
 
     @Column
     private DateTimeZone createdOn;
 
-    public UUID getResponseId() {
-        return responseId;
+    public UUID getCommentId() {
+        return commentId;
     }
 
-    public void setResponseId(UUID responseId) {
-        this.responseId = responseId;
+    public void setCommentId(UUID commentId) {
+        this.commentId = commentId;
     }
 
     public UUID getResponseKey() {
@@ -36,12 +36,12 @@ public class Response {
         this.responseKey = responseKey;
     }
 
-    public int getSelected() {
-        return selected;
+    public String getCommentText() {
+        return commentText;
     }
 
-    public void setSelected(int selected) {
-        this.selected = selected;
+    public void setCommentText(String commentText) {
+        this.commentText = commentText;
     }
 
     public DateTimeZone getCreatedOn() {
@@ -52,13 +52,13 @@ public class Response {
         this.createdOn = createdOn;
     }
 
-    public Response() {
+    public UserComments() {
     }
 
-    public Response(UUID responseId, UUID responseKey, int selected, DateTimeZone createdOn) {
-        this.responseId = responseId;
+    public UserComments(UUID commentId, UUID responseKey, String commentText, DateTimeZone createdOn) {
+        this.commentId = commentId;
         this.responseKey = responseKey;
-        this.selected = selected;
+        this.commentText = commentText;
         this.createdOn = createdOn;
     }
 }

@@ -1,4 +1,4 @@
-package template.mgr;
+package com.objectcomputing.pulsesurvey.template.manager;
 import com.github.mustachejava.Mustache;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.Test;

@@ -1,8 +1,8 @@
-package send.surveys;
+package com.objectcomputing.pulsesurvey.send.surveys;
 
 import io.micronaut.function.executor.FunctionInitializer;
-import model.ResponseKey;
-import repositories.ResponseKeyRepository;
+import com.objectcomputing.pulsesurvey.model.ResponseKey;
+import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
 import io.micronaut.function.FunctionBean;
 
 import javax.inject.*;

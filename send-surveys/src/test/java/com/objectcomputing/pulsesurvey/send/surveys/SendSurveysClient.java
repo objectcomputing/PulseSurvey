@@ -1,7 +1,6 @@
-package send.surveys;
+package com.objectcomputing.pulsesurvey.send.surveys;
 
 import io.micronaut.function.client.FunctionClient;
-import io.micronaut.http.annotation.Body;
 import io.reactivex.Single;
 import javax.inject.Named;
 
