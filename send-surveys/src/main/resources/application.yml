@@ -1,5 +1,5 @@
 micronaut:
-  function:
+  application:
     name: send-surveys
 root: src/main/resources
 
@@ -11,3 +11,11 @@ root: src/main/resources
       username: pulsesurvey
       password: 'surveyadmin321'
       dialect: POSTGRES
+
+  oci-google-drive:
+    application:
+      dir-key: "benefits"
+      name: "OCI Surveys"
+      scopes:
+        - "https://www.googleapis.com/auth/drive.file"
+        - "https://www.googleapis.com/auth/gmail.send"
