@@ -1,31 +1,25 @@
 package com.objectcomputing.pulsesurvey.send.surveys;
 
-import com.objectcomputing.pulsesurvey.model.Survey;
-import io.micronaut.function.executor.FunctionInitializer;
+import com.objectcomputing.pulsesurvey.model.SendSurveysCommand;
 import com.objectcomputing.pulsesurvey.model.ResponseKey;
 import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
-import io.micronaut.function.FunctionBean;
 
 import javax.inject.*;
-import java.io.IOException;
-import java.util.function.Supplier;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.lang.Math;
 
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Controller("/sendEmails")
-public class SendSurveysController {
-    private static final Logger LOG = LoggerFactory.getLogger(SendSurveysController.class);
+@Controller("/surveys")
+public class SurveysController {
+    private static final Logger LOG = LoggerFactory.getLogger(SurveysController.class);
 
     @Inject
     private ResponseKeyRepository responseKeyRepo;
@@ -52,16 +46,16 @@ public class SendSurveysController {
     GetEmail(Google) -> SelectRandom -> GenerateKeys -> Map<String Email, String KeyUUID>
     Map gets returned */
 
-    @Post(value = "/")
-    public SendSurveys sendEmails(@Body Survey survey) {
+    @Post(value = "send")
+    public SendSurveys sendEmails(@Body SendSurveysCommand sendSurveysCommand) {
 
-        LOG.info("post survey.getTemplateName(): " + survey.getTemplateName());
-        LOG.info("post survey.getPercentOfEmails(): " + survey.getPercentOfEmails());
+        LOG.info("post survey.getTemplateName(): " + sendSurveysCommand.getTemplateName());
+        LOG.info("post survey.getPercentOfEmails(): " + sendSurveysCommand.getPercentOfEmails());
 
         // to get aws environment vars:
         //  System.getenv("NAME_OF_YOUR_ENV_VARIABLE") // NOTE: getenv returns a string
-        LOG.info("survey.percentOfEmails: " + survey.getPercentOfEmails());
-        int percentOfEmailsToGet = Integer.parseInt(survey.getPercentOfEmails());
+        LOG.info("survey.percentOfEmails: " + sendSurveysCommand.getPercentOfEmails());
+        int percentOfEmailsToGet = Integer.parseInt(sendSurveysCommand.getPercentOfEmails());
         LOG.info("percentOfEmailsToGet: " + percentOfEmailsToGet);
 
         LOG.info("Grabbing email addresses.");
@@ -77,9 +71,9 @@ public class SendSurveysController {
         sendTheEmails(emailKeyMap);
 
         return new SendSurveys("Sent surveys: " + emailKeyMap.size() +
-                " for " + survey.getPercentOfEmails() +
+                " for " + sendSurveysCommand.getPercentOfEmails() +
                 " percent of total emails using " +
-                survey.getTemplateName() + " template");
+                sendSurveysCommand.getTemplateName() + " template");
 
     }
 

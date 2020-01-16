@@ -1,6 +1,6 @@
 package com.objectcomputing.pulsesurvey.model;
 
-public class Survey {
+public class SendSurveysCommand {
 
     String templateName;
     String percentOfEmails;
@@ -21,10 +21,10 @@ public class Survey {
         this.percentOfEmails = percentOfEmails;
     }
 
-    public Survey() {
+    public SendSurveysCommand() {
     }
 
-    public Survey(String templateName, String percentOfEmails) {
+    public SendSurveysCommand(String templateName, String percentOfEmails) {
         this.templateName = templateName;
         this.percentOfEmails = percentOfEmails;
     }

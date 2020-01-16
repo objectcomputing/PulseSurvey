@@ -1,6 +1,6 @@
 package com.objectcomputing.pulsesurvey.send.surveys;
 
-import com.objectcomputing.pulsesurvey.model.Survey;
+import com.objectcomputing.pulsesurvey.model.SendSurveysCommand;
 import io.micronaut.test.annotation.MicronautTest;
 import com.objectcomputing.pulsesurvey.model.ResponseKey;
 import net.bytebuddy.utility.RandomString;
@@ -31,14 +31,14 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SystemPropertyExtension.class)
 @MicronautTest
-public class SendSurveysControllerTest {
+public class SurveysControllerTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SendSurveysControllerTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SurveysControllerTest.class);
 
     @Inject
-    SendSurveysController itemUnderTest;
+    SurveysController itemUnderTest;
 
-    SendSurveysController.GmailApi gmailApiMock = mock(SendSurveysController.GmailApi.class);
+    SurveysController.GmailApi gmailApiMock = mock(SurveysController.GmailApi.class);
 
     @BeforeEach
     void setupTest() {
@@ -76,10 +76,10 @@ public class SendSurveysControllerTest {
         LOG.info("Using numberOfEmailsToBeSent: "+ numberOfEmailsToBeSent);
         when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
 
-        Survey survey = new Survey();
-        survey.setTemplateName("testTemplate.test");
-        survey.setPercentOfEmails(percentOfEmails);
-        SendSurveys sent = itemUnderTest.sendEmails(survey);
+        SendSurveysCommand sendSurveysCommand = new SendSurveysCommand();
+        sendSurveysCommand.setTemplateName("testTemplate.test");
+        sendSurveysCommand.setPercentOfEmails(percentOfEmails);
+        SendSurveys sent = itemUnderTest.sendEmails(sendSurveysCommand);
         assertThat(sent.getName(), containsString("Sent surveys:"));
         assertThat(sent.getName(), containsString("Sent surveys: "+numberOfEmailsToBeSent));
     }
