@@ -1,5 +1,6 @@
 package com.objectcomputing.pulsesurvey.send.surveys;
 
+import com.objectcomputing.pulsesurvey.model.Survey;
 import io.micronaut.function.executor.FunctionInitializer;
 import com.objectcomputing.pulsesurvey.model.ResponseKey;
 import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
@@ -14,12 +15,14 @@ import java.util.Map;
 import java.util.HashMap;
 import java.lang.Math;
 
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//@FunctionBean("send-surveys")
 @Controller("/sendEmails")
 public class SendSurveysController {
     private static final Logger LOG = LoggerFactory.getLogger(SendSurveysController.class);
@@ -49,14 +52,17 @@ public class SendSurveysController {
     GetEmail(Google) -> SelectRandom -> GenerateKeys -> Map<String Email, String KeyUUID>
     Map gets returned */
 
-    @Get("/{percentOfEmails}")
-    public SendSurveys get(String percentOfEmails) {
+    @Post(value = "/")
+    public SendSurveys sendEmails(@Body Survey survey) {
+
+        LOG.info("post survey.getTemplateName(): " + survey.getTemplateName());
+        LOG.info("post survey.getPercentOfEmails(): " + survey.getPercentOfEmails());
 
         // to get aws environment vars:
         //  System.getenv("NAME_OF_YOUR_ENV_VARIABLE") // NOTE: getenv returns a string
-        LOG.info("Reading percentOfEmails: " + percentOfEmails);
-        int percentOfEmailsToGet = Integer.parseInt(percentOfEmails);
-        LOG.info("Reading env var percentOfEmailsToGet: " + percentOfEmailsToGet);
+        LOG.info("survey.percentOfEmails: " + survey.getPercentOfEmails());
+        int percentOfEmailsToGet = Integer.parseInt(survey.getPercentOfEmails());
+        LOG.info("percentOfEmailsToGet: " + percentOfEmailsToGet);
 
         LOG.info("Grabbing email addresses.");
         List<String> emailAddresses = getRandomEmailAddresses(percentOfEmailsToGet);
@@ -65,10 +71,16 @@ public class SendSurveysController {
         LOG.info("Mapping emails to keys.");
         Map<String, String> emailKeyMap = new HashMap<String, String>();
         emailKeyMap = mapEmailsToKeys(emailAddresses, keys);
-        LOG.info("   And Finally  - emailKeyMap: " + emailKeyMap);
+        LOG.info("And Finally  - emailKeyMap: " + emailKeyMap);
 
         // send some emails
-        return new SendSurveys("Sent surveys: " + emailKeyMap.size());
+        sendTheEmails(emailKeyMap);
+
+        return new SendSurveys("Sent surveys: " + emailKeyMap.size() +
+                " for " + survey.getPercentOfEmails() +
+                " percent of total emails using " +
+                survey.getTemplateName() + " template");
+
     }
 
     List<String> getRandomEmailAddresses(int percentOfEmailsNeeded) {
@@ -85,12 +97,12 @@ public class SendSurveysController {
         for (int i = 0; i < numberOfAddressesRequested; i++) {
             randomSubsetEmailAddresses.add(emailAddresses.get(i));
         }
-  //      return emailAddresses;
+        //      return emailAddresses;
         return randomSubsetEmailAddresses;
     }
 
     List<ResponseKey> generateKeys(int howManyKeys) {
-        
+
         List<ResponseKey> keys = new ArrayList<ResponseKey>();
 
         for (int i = 0; i < howManyKeys; i++) {
@@ -119,9 +131,12 @@ public class SendSurveysController {
         return map;
     }
 
-    void sendTheEmails(List<String> emails, List<String> keys) {
+    void sendTheEmails(Map<String, String> emailKeyMap) {
 
         // call some google api with the list of emails to send them with a key for each
+
+        LOG.info("I'm sending the emails now");
+
 
     }
 

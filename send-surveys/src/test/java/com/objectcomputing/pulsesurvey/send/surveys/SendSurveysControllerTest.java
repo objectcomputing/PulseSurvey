@@ -1,5 +1,6 @@
 package com.objectcomputing.pulsesurvey.send.surveys;
 
+import com.objectcomputing.pulsesurvey.model.Survey;
 import io.micronaut.test.annotation.MicronautTest;
 import com.objectcomputing.pulsesurvey.model.ResponseKey;
 import net.bytebuddy.utility.RandomString;
@@ -7,7 +8,6 @@ import net.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junitpioneer.jupiter.SetSystemProperty;
 import org.junitpioneer.jupiter.SystemPropertyExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +65,7 @@ public class SendSurveysControllerTest {
     static final int PERCENT_OF_EMAILS = 10;
 
     @Test
-    void testGet_ReportsCorrectNumber() {
+    void testSendEmails_ReportsCorrectNumber() {
         String percentOfEmails = "10";
         double doublePercentOfEmails = parseDouble(percentOfEmails);
         LOG.info("Using doublePercentOfEmails: "+ doublePercentOfEmails);
@@ -75,8 +75,11 @@ public class SendSurveysControllerTest {
                 .ceil(fakeEmails.size() * parseDouble(percentOfEmails) / 100.0);
         LOG.info("Using numberOfEmailsToBeSent: "+ numberOfEmailsToBeSent);
         when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
-        
-        SendSurveys sent = itemUnderTest.get(percentOfEmails);
+
+        Survey survey = new Survey();
+        survey.setTemplateName("testTemplate.test");
+        survey.setPercentOfEmails(percentOfEmails);
+        SendSurveys sent = itemUnderTest.sendEmails(survey);
         assertThat(sent.getName(), containsString("Sent surveys:"));
         assertThat(sent.getName(), containsString("Sent surveys: "+numberOfEmailsToBeSent));
     }
