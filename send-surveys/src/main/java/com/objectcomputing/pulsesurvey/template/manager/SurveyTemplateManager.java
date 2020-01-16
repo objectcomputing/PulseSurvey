@@ -21,7 +21,7 @@ public class SurveyTemplateManager {
 
     public Mustache getMustache(String mustacheFileName) {
 
-        return factory.compile(mustacheFileName);
+        return factory.compile(mustacheFileName + ".mustache");
     }
 
     public String populateTemplate(String templateFileName, Object data)
