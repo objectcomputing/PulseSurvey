@@ -1,5 +1,6 @@
 package com.objectcomputing.pulsesurvey.send.surveys;
 
+import com.objectcomputing.pulsesurvey.model.SendSurveysCommand;
 import io.micronaut.test.annotation.MicronautTest;
 import com.objectcomputing.pulsesurvey.model.ResponseKey;
 import net.bytebuddy.utility.RandomString;
@@ -7,7 +8,6 @@ import net.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junitpioneer.jupiter.SetSystemProperty;
 import org.junitpioneer.jupiter.SystemPropertyExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static java.lang.Double.parseDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,14 +31,14 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SystemPropertyExtension.class)
 @MicronautTest
-public class SendSurveysFunctionTest {
+public class SurveysControllerTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SendSurveysFunctionTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SurveysControllerTest.class);
 
     @Inject
-    SendSurveysFunction itemUnderTest;
+    SurveysController itemUnderTest;
 
-    SendSurveysFunction.GmailApi gmailApiMock = mock(SendSurveysFunction.GmailApi.class);
+    SurveysController.GmailApi gmailApiMock = mock(SurveysController.GmailApi.class);
 
     @BeforeEach
     void setupTest() {
@@ -64,15 +65,21 @@ public class SendSurveysFunctionTest {
     static final int PERCENT_OF_EMAILS = 10;
 
     @Test
-    @SetSystemProperty(key="PERCENT_OF_EMAILS", value="10")
-    void testFunctionGet_ReportsCorrectNumber() {
+    void testSendEmails_ReportsCorrectNumber() {
+        String percentOfEmails = "10";
+        double doublePercentOfEmails = parseDouble(percentOfEmails);
+        LOG.info("Using doublePercentOfEmails: "+ doublePercentOfEmails);
         List<String> fakeEmails = generateEmails((int)(Math.random()*100)%50);
         LOG.info("Using addresses: "+ fakeEmails.size());
         final int numberOfEmailsToBeSent = (int) Math
-                .ceil(fakeEmails.size() * (double) PERCENT_OF_EMAILS / 100.0);
+                .ceil(fakeEmails.size() * parseDouble(percentOfEmails) / 100.0);
+        LOG.info("Using numberOfEmailsToBeSent: "+ numberOfEmailsToBeSent);
         when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
-        
-        SendSurveys sent = itemUnderTest.get();
+
+        SendSurveysCommand sendSurveysCommand = new SendSurveysCommand();
+        sendSurveysCommand.setTemplateName("testTemplate.test");
+        sendSurveysCommand.setPercentOfEmails(percentOfEmails);
+        SendSurveys sent = itemUnderTest.sendEmails(sendSurveysCommand);
         assertThat(sent.getName(), containsString("Sent surveys:"));
         assertThat(sent.getName(), containsString("Sent surveys: "+numberOfEmailsToBeSent));
     }

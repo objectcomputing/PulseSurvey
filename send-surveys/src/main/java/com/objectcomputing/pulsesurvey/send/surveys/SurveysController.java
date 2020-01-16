@@ -1,25 +1,25 @@
 package com.objectcomputing.pulsesurvey.send.surveys;
 
-import io.micronaut.function.executor.FunctionInitializer;
+import com.objectcomputing.pulsesurvey.model.SendSurveysCommand;
 import com.objectcomputing.pulsesurvey.model.ResponseKey;
 import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
-import io.micronaut.function.FunctionBean;
 
 import javax.inject.*;
-import java.io.IOException;
-import java.util.function.Supplier;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.lang.Math;
+
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@FunctionBean("send-surveys")
-public class SendSurveysFunction extends FunctionInitializer
-        implements Supplier<SendSurveys> {
-    private static final Logger LOG = LoggerFactory.getLogger(SendSurveysFunction.class);
+@Controller("/surveys")
+public class SurveysController {
+    private static final Logger LOG = LoggerFactory.getLogger(SurveysController.class);
 
     @Inject
     private ResponseKeyRepository responseKeyRepo;
@@ -45,18 +45,19 @@ public class SendSurveysFunction extends FunctionInitializer
     /* call GetRandomEmails(what percentage of current employees) ->
     GetEmail(Google) -> SelectRandom -> GenerateKeys -> Map<String Email, String KeyUUID>
     Map gets returned */
-    @Override
-    public SendSurveys get() {
+
+    @Post(value = "send")
+    public SendSurveys sendEmails(@Body SendSurveysCommand sendSurveysCommand) {
+
+        LOG.info("post survey.getTemplateName(): " + sendSurveysCommand.getTemplateName());
+        LOG.info("post survey.getPercentOfEmails(): " + sendSurveysCommand.getPercentOfEmails());
 
         // to get aws environment vars:
         //  System.getenv("NAME_OF_YOUR_ENV_VARIABLE") // NOTE: getenv returns a string
-        LOG.error("Reading env var System.getProperty(PERCENT_OF_EMAILS): " + System.getProperty("PERCENT_OF_EMAILS"));
-        int percentOfEmailsToGet = Integer.parseInt(System.getProperty("PERCENT_OF_EMAILS"));
-        LOG.error("Reading env var percentOfEmailsToGet: " + percentOfEmailsToGet);
+        LOG.info("survey.percentOfEmails: " + sendSurveysCommand.getPercentOfEmails());
+        int percentOfEmailsToGet = Integer.parseInt(sendSurveysCommand.getPercentOfEmails());
+        LOG.info("percentOfEmailsToGet: " + percentOfEmailsToGet);
 
-        // can also get all of the env vars in a Map
-        // see:  https://docs.oracle.com/javase/tutorial/essential/environment/env.html
-//        int percentOfEmailsToGet = 9;  // will be set from env var
         LOG.info("Grabbing email addresses.");
         List<String> emailAddresses = getRandomEmailAddresses(percentOfEmailsToGet);
         LOG.info("Generating keys.");
@@ -64,15 +65,23 @@ public class SendSurveysFunction extends FunctionInitializer
         LOG.info("Mapping emails to keys.");
         Map<String, String> emailKeyMap = new HashMap<String, String>();
         emailKeyMap = mapEmailsToKeys(emailAddresses, keys);
-        LOG.info("   And Finally  - emailKeyMap: " + emailKeyMap);
+        LOG.info("And Finally  - emailKeyMap: " + emailKeyMap);
 
         // send some emails
-        return new SendSurveys("Sent surveys: " + emailKeyMap.size());
+        sendTheEmails(emailKeyMap);
+
+        return new SendSurveys("Sent surveys: " + emailKeyMap.size() +
+                " for " + sendSurveysCommand.getPercentOfEmails() +
+                " percent of total emails using " +
+                sendSurveysCommand.getTemplateName() + " template");
+
     }
 
     List<String> getRandomEmailAddresses(int percentOfEmailsNeeded) {
         double totalAddresses = getTotalNumberOfAvailableEmailAddresses();
+        LOG.info("totalAddresses: " + totalAddresses);
         long numberOfAddressesRequested = (long) Math.ceil(totalAddresses * (double) percentOfEmailsNeeded / 100.0);
+        LOG.info("numberOfAddressesRequested: " + numberOfAddressesRequested);
         List<String> emailAddresses = new ArrayList<String>();
         List<String> randomSubsetEmailAddresses = new ArrayList<String>();
 
@@ -82,12 +91,12 @@ public class SendSurveysFunction extends FunctionInitializer
         for (int i = 0; i < numberOfAddressesRequested; i++) {
             randomSubsetEmailAddresses.add(emailAddresses.get(i));
         }
-  //      return emailAddresses;
+        //      return emailAddresses;
         return randomSubsetEmailAddresses;
     }
 
     List<ResponseKey> generateKeys(int howManyKeys) {
-        
+
         List<ResponseKey> keys = new ArrayList<ResponseKey>();
 
         for (int i = 0; i < howManyKeys; i++) {
@@ -116,19 +125,14 @@ public class SendSurveysFunction extends FunctionInitializer
         return map;
     }
 
-    void sendTheEmails(List<String> emails, List<String> keys) {
+    void sendTheEmails(Map<String, String> emailKeyMap) {
 
         // call some google api with the list of emails to send them with a key for each
 
+        LOG.info("I'm sending the emails now");
+
+
     }
 
-    /**
-     * This main method allows running the function as a CLI application using: echo '{}' | java -jar function.jar
-     * where the argument to echo is the JSON to be parsed.
-     */
-    public static void main(String... args) throws IOException {
-        SendSurveysFunction function = new SendSurveysFunction();
-        function.run(args, (context) -> function.get());
-    }
 }
 

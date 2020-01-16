@@ -96,7 +96,7 @@ shadowJar {
 run.classpath += configurations.developmentOnly
 run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')
 
-mainClassName = "send.surveys.SendSurveysFunction"
+mainClassName = "com.objectcomputing.pulsesurvey.send.surveys.Application"
 applicationDefaultJvmArgs = [""]
 
 jar {

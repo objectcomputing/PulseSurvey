@@ -30,7 +30,8 @@ public class templateManagerTest {
     @Test
     void testGetMustache() {
 
-        Mustache m = objectUnderTest.getMustache("emailTemplate.mustache");
+//        Mustache m = objectUnderTest.getMustache("emailTemplate.mustache");
+        Mustache m = objectUnderTest.getMustache("emailTemplate");
 
         assertNotNull(m);
     }
@@ -39,7 +40,8 @@ public class templateManagerTest {
     void testPopulateTemplate() {
 
         String stringUuid = UUID.randomUUID().toString();
-        String templateFileName = "emailTemplate.mustache";
+//        String templateFileName = "emailTemplate.mustache";
+        String templateFileName = "emailTemplate";
 
         Map<String, Object> map = new HashMap<>();
         map.put("surveyKey", stringUuid);
