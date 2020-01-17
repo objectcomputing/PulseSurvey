@@ -3,8 +3,10 @@ package com.objectcomputing.pulsesurvey.send.surveys;
 import com.objectcomputing.pulsesurvey.model.SendSurveysCommand;
 import com.objectcomputing.pulsesurvey.model.ResponseKey;
 import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
+import com.objectcomputing.pulsesurvey.template.manager.SurveyTemplateManager;
 
 import javax.inject.*;
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -23,6 +25,9 @@ public class SurveysController {
 
     @Inject
     private ResponseKeyRepository responseKeyRepo;
+
+    @Inject
+    private SurveyTemplateManager templateManager;
 
     class GmailApi {
         public List<String> getEmails() {
@@ -67,8 +72,17 @@ public class SurveysController {
         emailKeyMap = mapEmailsToKeys(emailAddresses, keys);
         LOG.info("And Finally  - emailKeyMap: " + emailKeyMap);
 
+        Map<String, String> emailBodies = null;
+        // populate the emails
+        try {
+             emailBodies = templateManager.populateEmails(sendSurveysCommand.getTemplateName(),
+                                                          emailKeyMap);
+        } catch (IOException e) {
+            LOG.error(e.getMessage());
+            e.printStackTrace();
+        }
         // send some emails
-        sendTheEmails(emailKeyMap);
+        sendTheEmails(emailBodies);
 
         return new SendSurveys("Sent surveys: " + emailKeyMap.size() +
                 " for " + sendSurveysCommand.getPercentOfEmails() +
@@ -125,7 +139,7 @@ public class SurveysController {
         return map;
     }
 
-    void sendTheEmails(Map<String, String> emailKeyMap) {
+    void sendTheEmails(Map<String, String> emailBodies) {
 
         // call some google api with the list of emails to send them with a key for each
 

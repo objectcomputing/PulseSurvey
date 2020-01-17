@@ -8,6 +8,8 @@ import com.google.api.client.util.Base64;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Message;
 import io.micronaut.context.annotation.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,6 +31,7 @@ public class GmailSender {
     private final JsonFactory jsonFactory;
     private final GoogleAuthenticator authenticator;
     private final String applicationName;
+    private static final Logger LOG = LoggerFactory.getLogger(GmailSender.class);
 
     @Inject
     GmailSender(
@@ -54,25 +57,26 @@ public class GmailSender {
             Session session = Session.getDefaultInstance(props, null);
             MimeMessage emailContent = new MimeMessage(session);
             emailContent.setFrom("kimberlinm@objectcomputing.com");
-            emailContent.addRecipient(javax.mail.Message.RecipientType.TO, new InternetAddress("kimberlinm@objectcomputing.com"));
+            emailContent.addRecipient(javax.mail.Message.RecipientType.TO,
+                    new InternetAddress("kimberlinm@objectcomputing.com"));
             emailContent.setSubject(subject);
             emailContent.setText(content);
-
+/*.setContent(html code)  will have to be constructed from template */
             Message message = createMessageWithEmail(emailContent);
             message = emailService.users().messages().send("kimberlinm@objectcomputing.com", message).execute();
 
-            System.out.println("Message id: " + message.getId());
-            System.out.println(message.toPrettyString());
+            LOG.info("Message id: " + message.getId());
+            LOG.info(message.toPrettyString());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        System.out.println("Email Sent: " + subject);
+        LOG.info("Email Sent: " + subject);
     }
 
     /**
-     * Create a message from an email.
+     * Create a message from an email. Converts Mime to gmail format
      *
      * @param emailContent Email to be set to raw of message
      * @return a message containing a base64url encoded email
