@@ -29,14 +29,8 @@ public class SurveyTemplateManager {
                                               Map<String, String> emailKeyMap)
             throws IOException {
 
-        // i need:
-        // template name,
-        // map of emails to keys,
-        // map of template variables and values for populateTemplate - make this one
-
         Map<String, String> emailBodies = new HashMap<>();
 
-        // loop to populate each email and add that to the return map
         int numberOfEmails = emailKeyMap.size();
 
         for (Map.Entry<String, String> entry : emailKeyMap.entrySet()) {
@@ -44,11 +38,7 @@ public class SurveyTemplateManager {
             templateVariableValueMap.put("surveyKey", entry.getValue());
             emailBodies.put(entry.getKey(), populateTemplate(templateFileName, templateVariableValueMap));
         }
-
-
-
-    //    emailBodies.put(emailaddress, populateTemplate(templateFileName, templateVariableValueMap));
-
+        
         return emailBodies;  //email addresses to html with keys
     }
 
