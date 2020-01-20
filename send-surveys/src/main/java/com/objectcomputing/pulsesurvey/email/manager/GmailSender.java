@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.security.GeneralSecurityException;
+import java.util.Map;
 import java.util.Properties;
 
 @Singleton
@@ -49,18 +50,20 @@ public class GmailSender {
                 .build();
     }
 
-    void sendEmail(String subject, String content) {
+    public void sendEmail(String subject, String emailAddress, String emailMessage) {
         try {
             Gmail emailService = getService();
+            LOG.info("Email Address: " + emailAddress);
+            LOG.info("Email body: " + emailMessage);
 
             Properties props = new Properties();
             Session session = Session.getDefaultInstance(props, null);
             MimeMessage emailContent = new MimeMessage(session);
             emailContent.setFrom("kimberlinm@objectcomputing.com");
             emailContent.addRecipient(javax.mail.Message.RecipientType.TO,
-                    new InternetAddress("kimberlinm@objectcomputing.com"));
+                    new InternetAddress("williamsh@objectcomputing.com"));
             emailContent.setSubject(subject);
-            emailContent.setText(content);
+            emailContent.setText(emailMessage);
 /*.setContent(html code)  will have to be constructed from template */
             Message message = createMessageWithEmail(emailContent);
             message = emailService.users().messages().send("kimberlinm@objectcomputing.com", message).execute();

@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -77,7 +78,7 @@ public class SurveysControllerTest {
         when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
 
         SendSurveysCommand sendSurveysCommand = new SendSurveysCommand();
-        sendSurveysCommand.setTemplateName("testTemplate.test");
+        sendSurveysCommand.setTemplateName("emailTemplate");
         sendSurveysCommand.setPercentOfEmails(percentOfEmails);
         SendSurveys sent = itemUnderTest.sendEmails(sendSurveysCommand);
         assertThat(sent.getName(), containsString("Sent surveys:"));
@@ -147,11 +148,11 @@ public class SurveysControllerTest {
     // set up a list of uuid keys and see if a mock of this method
     // returns same make sure it returns x num of keys
     @Test
-    void testGenerateKeys() {
+    void testGenerateAndSaveKeys() {
         final int numkeys = (int)(Math.random()*100)%100;
         LOG.info("Generating keys: "+ numkeys);
 
-        List<ResponseKey> actual = itemUnderTest.generateKeys(numkeys);
+        List<ResponseKey> actual = itemUnderTest.generateAndSaveKeys(numkeys);
         assertEquals(numkeys, actual.size());
     }
 
@@ -193,6 +194,11 @@ public class SurveysControllerTest {
     @Test
     void testSendTheEmails() {
         // * no idea how to test this one *
+        Map<String, String> fakeEmailMap =  new HashMap<String, String>();
+        fakeEmailMap.put("a@dnc.com","a bunch of fake html");
+        fakeEmailMap.put("b@dnc.com","more fake html");
+        //call sendTheEmails with the email body map <emailaddress, emailbody>
+        itemUnderTest.sendTheEmails(fakeEmailMap);
 
     }
 

@@ -38,7 +38,7 @@ public class SurveyTemplateManager {
             templateVariableValueMap.put("surveyKey", entry.getValue());
             emailBodies.put(entry.getKey(), populateTemplate(templateFileName, templateVariableValueMap));
         }
-        
+
         return emailBodies;  //email addresses to html with keys
     }
 

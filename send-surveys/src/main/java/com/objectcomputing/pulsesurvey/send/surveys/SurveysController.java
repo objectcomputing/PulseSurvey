@@ -1,5 +1,6 @@
 package com.objectcomputing.pulsesurvey.send.surveys;
 
+import com.objectcomputing.pulsesurvey.email.manager.GmailSender;
 import com.objectcomputing.pulsesurvey.model.SendSurveysCommand;
 import com.objectcomputing.pulsesurvey.model.ResponseKey;
 import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
@@ -28,6 +29,9 @@ public class SurveysController {
 
     @Inject
     private SurveyTemplateManager templateManager;
+
+    @Inject
+    private GmailSender gmailSender;
 
     class GmailApi {
         public List<String> getEmails() {
@@ -66,7 +70,7 @@ public class SurveysController {
         LOG.info("Grabbing email addresses.");
         List<String> emailAddresses = getRandomEmailAddresses(percentOfEmailsToGet);
         LOG.info("Generating keys.");
-        List<ResponseKey> keys = generateKeys(emailAddresses.size());
+        List<ResponseKey> keys = generateAndSaveKeys(emailAddresses.size());
         LOG.info("Mapping emails to keys.");
         Map<String, String> emailKeyMap = new HashMap<String, String>();
         emailKeyMap = mapEmailsToKeys(emailAddresses, keys);
@@ -109,7 +113,7 @@ public class SurveysController {
         return randomSubsetEmailAddresses;
     }
 
-    List<ResponseKey> generateKeys(int howManyKeys) {
+    List<ResponseKey> generateAndSaveKeys(int howManyKeys) {
 
         List<ResponseKey> keys = new ArrayList<ResponseKey>();
 
@@ -139,12 +143,15 @@ public class SurveysController {
         return map;
     }
 
-    void sendTheEmails(Map<String, String> emailBodies) {
+    void sendTheEmails(Map<String, String> emailAddressToBodiesMap) {
 
         // call some google api with the list of emails to send them with a key for each
 
         LOG.info("I'm sending the emails now");
 
+        emailAddressToBodiesMap.forEach((address, body) ->
+                gmailSender.sendEmail("Feelings, Whoa, Whoa, Whoa, Feelings", address, body)
+                );
 
     }
 

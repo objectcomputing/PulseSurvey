@@ -6,10 +6,10 @@ root: src/main/resources
 ---
   datasources:
     default:
-      url: jdbc:postgresql://pulsesurveydb.ca4gwn3eiebi.us-east-1.rds.amazonaws.com:5432/pulsesurveydb
+      url: ${JDBC_URL:`jdbc:postgresql://localhost:5432/pulsesurveydb`}
       driverClassName: org.postgresql.Driver
-      username: pulsesurvey
-      password: 'surveyadmin321'
+      username: postgres
+      password: 'postgres'
       dialect: POSTGRES
 
   oci-google-drive:
