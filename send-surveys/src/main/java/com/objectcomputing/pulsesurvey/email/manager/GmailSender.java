@@ -71,11 +71,13 @@ public class GmailSender {
             LOG.info("Message id: " + message.getId());
             LOG.info(message.toPrettyString());
         } catch (IOException e) {
+            LOG.error("IOException: " + e.getMessage());
             e.printStackTrace();
         } catch (MessagingException e) {
+            LOG.error("MessagingException: " + e.getMessage());
             e.printStackTrace();
         }
-        LOG.info("Email Sent: " + subject);
+        LOG.info("Email Sent: " + subject + " to " + emailAddress + "\n");
     }
 
     /**
