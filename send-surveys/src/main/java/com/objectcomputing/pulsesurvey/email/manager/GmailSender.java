@@ -70,6 +70,7 @@ public class GmailSender {
 
             LOG.info("Message id: " + message.getId());
             LOG.info(message.toPrettyString());
+            LOG.info("Email Sent: " + subject + " to " + emailAddress + "\n");
         } catch (IOException e) {
             LOG.error("IOException: " + e.getMessage());
             e.printStackTrace();
@@ -77,7 +78,7 @@ public class GmailSender {
             LOG.error("MessagingException: " + e.getMessage());
             e.printStackTrace();
         }
-        LOG.info("Email Sent: " + subject + " to " + emailAddress + "\n");
+
     }
 
     /**

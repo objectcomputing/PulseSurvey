@@ -51,6 +51,18 @@ public class SurveysController {
         this.gmail = api;
     }
 
+    public void setResponseKeyRepo(ResponseKeyRepository responseKeyRepository) {
+        this.responseKeyRepo = responseKeyRepository;
+    }
+
+    public void setTemplateManager(SurveyTemplateManager surveyTemplateManager) {
+        this.templateManager = surveyTemplateManager;
+    }
+
+    public void setGmailSender(GmailSender gmailSender) {
+        this.gmailSender = gmailSender;
+    }
+
     /* call GetRandomEmails(what percentage of current employees) ->
     GetEmail(Google) -> SelectRandom -> GenerateKeys -> Map<String Email, String KeyUUID>
     Map gets returned */
