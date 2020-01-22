@@ -15,7 +15,7 @@ public class Response {
     private UUID responseKey;
 
     @Column
-    private int selected;
+    private String selected;
 
     @Column
     private DateTimeZone createdOn;
@@ -36,11 +36,11 @@ public class Response {
         this.responseKey = responseKey;
     }
 
-    public int getSelected() {
+    public String getSelected() {
         return selected;
     }
 
-    public void setSelected(int selected) {
+    public void setSelected(String selected) {
         this.selected = selected;
     }
 
@@ -55,7 +55,7 @@ public class Response {
     public Response() {
     }
 
-    public Response(UUID responseId, UUID responseKey, int selected, DateTimeZone createdOn) {
+    public Response(UUID responseId, UUID responseKey, String selected, DateTimeZone createdOn) {
         this.responseId = responseId;
         this.responseKey = responseKey;
         this.selected = selected;
