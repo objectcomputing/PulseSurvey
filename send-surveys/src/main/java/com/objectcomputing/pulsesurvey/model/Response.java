@@ -1,23 +1,32 @@
 package com.objectcomputing.pulsesurvey.model;
 
+import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.DateCreated;
 import io.micronaut.data.annotation.Id;
 import org.joda.time.DateTimeZone;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.UUID;
 
+@Entity
+@Table(name = "response")
 public class Response {
 
     @Id
+    @Column(name="responseid")
+    @AutoPopulated
     private UUID responseId;
 
-    @Column
+    @Column(name="responsekey")
     private UUID responseKey;
 
     @Column
     private String selected;
 
-    @Column
+    @Column(name="createdon")
+    @DateCreated
     private DateTimeZone createdOn;
 
     public UUID getResponseId() {
