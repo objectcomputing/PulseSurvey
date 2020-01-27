@@ -32,13 +32,49 @@ class SurveyResponseControllerTest {
     private static final Logger LOG = LoggerFactory.getLogger(SurveysControllerTest.class);
 
     @Test
-    void testHappiness() {
+    void testHappinessReceived() {
 
         String currentEmotion = "happy";
         String surveyKey = "123";
 
         HttpResponse<ByteBuffer> response = httpClient
-                .exchange(HttpRequest.GET(String.format("/happiness?currentEmotion=%s&surveyKey=%s", currentEmotion, surveyKey)))
+                .exchange(HttpRequest.GET(String.format("/happiness/received?currentEmotion=%s&surveyKey=%s", currentEmotion, surveyKey)))
+                .blockingFirst();
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        response.equals("Hello, your current emotion is " + currentEmotion + "!" +
+                " with a key of: " + surveyKey);
+
+    }
+
+    @Test
+    void testHappinessValidateKey() {
+
+        // mock db
+        String currentEmotion = "happy";
+        String surveyKey = "68fe8990-be83-49ec-b885-17cf1db78001";
+
+        HttpResponse<ByteBuffer> response = httpClient
+                .exchange(HttpRequest.GET(String.format("/happiness?currentEmotion=%s&surveyKey=%s",
+                        currentEmotion, surveyKey)))
+                .blockingFirst();
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+//        response.equals("Hello, your current emotion is " + currentEmotion + "!" +
+//                " with a key of: " + surveyKey);
+
+    }
+
+    @Test
+    void testHappiness() {
+
+        // mock db
+        String currentEmotion = "happy";
+        String surveyKey = "4975741f-4464-4e49-9165-ddb0359d6b6e";
+
+        HttpResponse<ByteBuffer> response = httpClient
+                .exchange(HttpRequest.GET(String.format("/happiness?currentEmotion=%s&surveyKey=%s",
+                        currentEmotion, surveyKey)))
                 .blockingFirst();
 
         assertEquals(HttpStatus.OK, response.getStatus());
