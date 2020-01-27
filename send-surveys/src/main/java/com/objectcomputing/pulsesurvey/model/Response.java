@@ -8,6 +8,7 @@ import org.joda.time.DateTimeZone;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -27,7 +28,7 @@ public class Response {
 
     @Column(name="createdon")
     @DateCreated
-    private DateTimeZone createdOn;
+    private LocalDateTime createdOn;
 
     public UUID getResponseId() {
         return responseId;
@@ -53,18 +54,18 @@ public class Response {
         this.selected = selected;
     }
 
-    public DateTimeZone getCreatedOn() {
+    public LocalDateTime getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(DateTimeZone createdOn) {
+    public void setCreatedOn(LocalDateTime createdOn) {
         this.createdOn = createdOn;
     }
 
     public Response() {
     }
 
-    public Response(UUID responseId, UUID responseKey, String selected, DateTimeZone createdOn) {
+    public Response(UUID responseId, UUID responseKey, String selected, LocalDateTime createdOn) {
         this.responseId = responseId;
         this.responseKey = responseKey;
         this.selected = selected;
