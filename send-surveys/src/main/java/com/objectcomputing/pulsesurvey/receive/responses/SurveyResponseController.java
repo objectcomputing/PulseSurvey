@@ -27,6 +27,10 @@ public class SurveyResponseController {
     @Inject
     private ResponseKeyRepository responseKeyRepo;
 
+    public void setResponseRepo(ResponseRepository responseRepository) {
+        this.responseRepo = responseRepository;
+    }
+
     @Produces(MediaType.TEXT_PLAIN)
     @Get("/received")
     HttpResponse<String> happinessReceived(String currentEmotion, String surveyKey) {
@@ -46,28 +50,19 @@ public class SurveyResponseController {
         LOG.info("Hello, your current emotion is " + currentEmotion + "!" +
                 " with a key of: " + surveyKey);
 
-        // see if key is valid (in the db in responsekey table)
         boolean goodKey = false;
         goodKey = responseKeyRepo.existsById(UUID.fromString(surveyKey));
-//        Optional<ResponseKey> responseKey = responseKeyRepo.existsById(UUID.fromString(surveyKey));
-//        if (responseKey.isPresent()) goodKey = true;
 
         LOG.info("happiness - key is valid? " + goodKey);
 
         // if yes - store happiness (and comments(?))
         if (goodKey) {
-            // add record to response table with responsekey and selected and createdon
             boolean responseAdded = addResponse(currentEmotion, surveyKey);
-//            Response response = new Response();
-//            response.setResponseKey(UUID.fromString(surveyKey));
-//            response.setSelected(currentEmotion);
-//            responseRepo.save(response);
 
             // (maybe create usercomments row and fill it in?)
 
             removeKey(surveyKey);  // currently problematic
 
-            // send thank you
             sendThankYou("someemailaddressfromsomewhere");
 
         } else {
@@ -79,7 +74,7 @@ public class SurveyResponseController {
 
     }
 
-    private boolean addResponse(String currentEmotion, String surveyKey) {
+    boolean addResponse(String currentEmotion, String surveyKey) {
 
         boolean responseAdded = false;
         Response response = new Response();
@@ -90,7 +85,8 @@ public class SurveyResponseController {
 
         LOG.info("Adding response " + currentEmotion + "  ");
 
-        if (response.getCreatedOn() != null) responseAdded = true;
+//        if (response.getCreatedOn() != null) responseAdded = true;
+        if (response.getResponseId() != null) responseAdded = true;
 
         return responseAdded;
     }
@@ -122,6 +118,5 @@ public class SurveyResponseController {
 
 
     }
-
 
 }
