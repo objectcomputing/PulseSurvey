@@ -30,7 +30,6 @@ public class templateManagerTest {
     @Test
     void testGetMustache() {
 
-//        Mustache m = objectUnderTest.getMustache("emailTemplate.mustache");
         Mustache m = objectUnderTest.getMustache("emailTemplate");
 
         assertNotNull(m);
@@ -40,8 +39,8 @@ public class templateManagerTest {
     void testPopulateTemplate() {
 
         String stringUuid = UUID.randomUUID().toString();
-//        String templateFileName = "emailTemplate.mustache";
         String templateFileName = "emailTemplate";
+        Map<String, String> emailKeyMap;
 
         Map<String, Object> map = new HashMap<>();
         map.put("surveyKey", stringUuid);
@@ -54,6 +53,54 @@ public class templateManagerTest {
         }
 
         assertThat(html, containsString(stringUuid));
+    }
+
+    @Test
+    void testPopulateEmails_single() {
+
+        String templateFileName = "emailTemplate";
+        Map<String, String> emailKeyMap = new HashMap<>();
+        Map<String, String> emailBodies = new HashMap<>();
+
+        emailKeyMap.put("a@dnc.com", "12345678");
+
+        try {
+            emailBodies = objectUnderTest.populateEmails(templateFileName, emailKeyMap);
+        } catch (IOException e) {
+            LOG.error("IOException for: "+ templateFileName + " " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        LOG.error("emailBodies.get(\"a@dnc.com\"): "+ emailBodies.get("a@dnc.com"));
+
+        assertNotNull(emailBodies);
+        assertThat(emailBodies.get("a@dnc.com"), containsString("12345678"));
+    }
+
+
+    @Test
+    void testPopulateEmails_multiple() {
+
+        String templateFileName = "emailTemplate";
+        Map<String, String> emailKeyMap = new HashMap<>();
+        Map<String, String> emailBodies = new HashMap<>();
+
+        emailKeyMap.put("a@dnc.com", "12345678");
+        emailKeyMap.put("b@dnc.com", "987654321");
+
+        try {
+            emailBodies = objectUnderTest.populateEmails(templateFileName, emailKeyMap);
+        } catch (IOException e) {
+            LOG.error("IOException for: "+ templateFileName + " " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        LOG.error("emailBodies.get(\"a@dnc.com\"): "+ emailBodies.get("a@dnc.com"));
+        LOG.error("emailBodies.get(\"b@dnc.com\"): "+ emailBodies.get("b@dnc.com"));
+
+        assertNotNull(emailBodies);
+        assertThat(emailBodies.get("a@dnc.com"), containsString("12345678"));
+        assertThat(emailBodies.get("b@dnc.com"), containsString("987654321"));
     }
 
 }

@@ -12,7 +12,7 @@ import java.util.UUID;
 import javax.persistence.Column;
 
 @Entity
-@Table(name = "keys")
+@Table(name = "responsekeys")
 public class ResponseKey {
 
     @Id

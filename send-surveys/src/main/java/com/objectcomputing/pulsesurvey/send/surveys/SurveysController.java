@@ -1,10 +1,13 @@
 package com.objectcomputing.pulsesurvey.send.surveys;
 
+import com.objectcomputing.pulsesurvey.email.manager.GmailSender;
 import com.objectcomputing.pulsesurvey.model.SendSurveysCommand;
 import com.objectcomputing.pulsesurvey.model.ResponseKey;
 import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
+import com.objectcomputing.pulsesurvey.template.manager.SurveyTemplateManager;
 
 import javax.inject.*;
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -24,6 +27,12 @@ public class SurveysController {
     @Inject
     private ResponseKeyRepository responseKeyRepo;
 
+    @Inject
+    private SurveyTemplateManager templateManager;
+
+    @Inject
+    private GmailSender gmailSender;
+
     class GmailApi {
         public List<String> getEmails() {
             List<String> emailAddresses = new ArrayList<>();
@@ -40,6 +49,18 @@ public class SurveysController {
 
     public void setGmailApi(GmailApi api) {
         this.gmail = api;
+    }
+
+    public void setResponseKeyRepo(ResponseKeyRepository responseKeyRepository) {
+        this.responseKeyRepo = responseKeyRepository;
+    }
+
+    public void setTemplateManager(SurveyTemplateManager surveyTemplateManager) {
+        this.templateManager = surveyTemplateManager;
+    }
+
+    public void setGmailSender(GmailSender gmailSender) {
+        this.gmailSender = gmailSender;
     }
 
     /* call GetRandomEmails(what percentage of current employees) ->
@@ -61,14 +82,23 @@ public class SurveysController {
         LOG.info("Grabbing email addresses.");
         List<String> emailAddresses = getRandomEmailAddresses(percentOfEmailsToGet);
         LOG.info("Generating keys.");
-        List<ResponseKey> keys = generateKeys(emailAddresses.size());
+        List<ResponseKey> keys = generateAndSaveKeys(emailAddresses.size());
         LOG.info("Mapping emails to keys.");
         Map<String, String> emailKeyMap = new HashMap<String, String>();
         emailKeyMap = mapEmailsToKeys(emailAddresses, keys);
         LOG.info("And Finally  - emailKeyMap: " + emailKeyMap);
 
+        Map<String, String> emailBodies = null;
+        // populate the emails
+        try {
+             emailBodies = templateManager.populateEmails(sendSurveysCommand.getTemplateName(),
+                                                          emailKeyMap);
+        } catch (IOException e) {
+            LOG.error(e.getMessage());
+            e.printStackTrace();
+        }
         // send some emails
-        sendTheEmails(emailKeyMap);
+        sendTheEmails(emailBodies);
 
         return new SendSurveys("Sent surveys: " + emailKeyMap.size() +
                 " for " + sendSurveysCommand.getPercentOfEmails() +
@@ -95,7 +125,7 @@ public class SurveysController {
         return randomSubsetEmailAddresses;
     }
 
-    List<ResponseKey> generateKeys(int howManyKeys) {
+    List<ResponseKey> generateAndSaveKeys(int howManyKeys) {
 
         List<ResponseKey> keys = new ArrayList<ResponseKey>();
 
@@ -125,12 +155,15 @@ public class SurveysController {
         return map;
     }
 
-    void sendTheEmails(Map<String, String> emailKeyMap) {
+    void sendTheEmails(Map<String, String> emailAddressToBodiesMap) {
 
         // call some google api with the list of emails to send them with a key for each
 
         LOG.info("I'm sending the emails now");
 
+        emailAddressToBodiesMap.forEach((address, body) ->
+                gmailSender.sendEmail("Feelings, Whoa, Whoa, Whoa, Feelings", address, body)
+                );
 
     }
 
