@@ -91,7 +91,7 @@ class SurveyResponseControllerTest {
         String currentEmotion = "happyTest";
         String surveyKey =       "12345678-9123-4567-abcd-123456789abc";
         String fakeResponseKey = "98765432-9876-9876-9876-987654321234";
-        
+
         Response fakeResponse = new Response();
         fakeResponse.setResponseId(UUID.fromString(fakeResponseKey));
         fakeResponse.setResponseKey(UUID.fromString(surveyKey));
