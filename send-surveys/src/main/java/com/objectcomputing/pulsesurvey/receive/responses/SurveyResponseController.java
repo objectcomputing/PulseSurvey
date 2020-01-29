@@ -94,7 +94,6 @@ public class SurveyResponseController {
     private void validateKey(String surveyKey) {
 
         LOG.info("Validating key" + surveyKey);
-
         Optional<Response> response = responseRepo.findById(UUID.fromString(surveyKey));
         LOG.info("response: " + response.get());
         boolean keyIsInDb = responseRepo.existsById(UUID.fromString(surveyKey));
