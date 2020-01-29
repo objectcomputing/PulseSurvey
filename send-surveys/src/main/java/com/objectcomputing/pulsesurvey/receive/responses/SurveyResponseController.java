@@ -51,7 +51,8 @@ public class SurveyResponseController {
                 " with a key of: " + surveyKey);
 
         boolean goodKey = false;
-        goodKey = responseKeyRepo.existsById(UUID.fromString(surveyKey));
+//        goodKey = responseKeyRepo.existsById(UUID.fromString(surveyKey));
+        goodKey = validateKey(surveyKey);
 
         LOG.info("happiness - key is valid? " + goodKey);
 
@@ -59,9 +60,9 @@ public class SurveyResponseController {
         if (goodKey) {
             boolean responseAdded = addResponse(currentEmotion, surveyKey);
 
-            // (maybe create usercomments row and fill it in?)
+            // add usercomments row and fill it in
 
-            removeKey(surveyKey);  // currently problematic
+            markKeyAsUsed(surveyKey);  // currently problematic
 
             sendThankYou("someemailaddressfromsomewhere");
 
@@ -91,19 +92,32 @@ public class SurveyResponseController {
         return responseAdded;
     }
 
-    private void validateKey(String surveyKey) {
+    private boolean validateKey(String surveyKey) {
 
         LOG.info("Validating key" + surveyKey);
-        Optional<Response> response = responseRepo.findById(UUID.fromString(surveyKey));
-        LOG.info("response: " + response.get());
-        boolean keyIsInDb = responseRepo.existsById(UUID.fromString(surveyKey));
+//        goodKey = responseKeyRepo.existsById(UUID.fromString(surveyKey));
+        Optional<ResponseKey> responseKey = responseKeyRepo.findById(UUID.fromString(surveyKey));
+//        LOG.info("response: " + response.get());
+//        boolean keyIsInDb = responseRepo.existsById(UUID.fromString(surveyKey));
+        boolean keyIsInDb = false;
+
+        if (responseKey.isPresent()) {
+            if (responseKey.get().isUsed()) {
+                keyIsInDb = true;
+            }
+        }
+
+//        responseKey.ifPresent(used -> {used.isUsed()});
+
         LOG.info("key is valid? " + keyIsInDb);
+
+        return keyIsInDb;
 
     }
 
-    private void removeKey(String surveyKey) {
+    private void markKeyAsUsed(String surveyKey) {
 
-        LOG.info("Removing key: " + surveyKey + " from responsekeys");
+        LOG.info("Marking key as used: " + surveyKey + " from responsekeys");
 
         // can't remove this because response has it as a foreign key
 
