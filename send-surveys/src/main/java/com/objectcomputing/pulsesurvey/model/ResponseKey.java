@@ -24,6 +24,9 @@ public class ResponseKey {
     @DateCreated
     private LocalDateTime issuedOn;
 
+    @Column(name="used")
+    private boolean used;
+
     public UUID getResponseKey() {
         return responseKey;
     }
@@ -40,11 +43,20 @@ public class ResponseKey {
         this.issuedOn = issuedOn;
     }
 
+    public boolean isUsed() { return used; }
+
+    public void setUsed(boolean used) { this.used = used; }
+
     public ResponseKey() {
     }
 
-    public ResponseKey(UUID responseKey, LocalDateTime issuedOn) {
+    public ResponseKey(boolean used) {
+        this.used = used;
+    }
+
+    public ResponseKey(UUID responseKey, LocalDateTime issuedOn, boolean used) {
         this.responseKey = responseKey;
         this.issuedOn = issuedOn;
+        this.used = used;
     }
 }
