@@ -4,6 +4,7 @@ import com.objectcomputing.pulsesurvey.model.Response;
 import com.objectcomputing.pulsesurvey.model.ResponseKey;
 import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
 import com.objectcomputing.pulsesurvey.repositories.ResponseRepository;
+import com.objectcomputing.pulsesurvey.template.manager.SurveyTemplateManager;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Controller("/happiness")
 public class SurveyResponseController {
@@ -26,6 +28,17 @@ public class SurveyResponseController {
 
     @Inject
     private ResponseKeyRepository responseKeyRepo;
+
+    @Inject
+    private SurveyTemplateManager templateManager;
+
+    public void setResponseKeyRepo(ResponseKeyRepository responseKeyRepository) {
+        this.responseKeyRepo = responseKeyRepository;
+    }
+
+    public void setTemplateManager(SurveyTemplateManager surveyTemplateManager) {
+        this.templateManager = surveyTemplateManager;
+    }
 
     public void setResponseRepo(ResponseRepository responseRepository) {
         this.responseRepo = responseRepository;
@@ -50,19 +63,19 @@ public class SurveyResponseController {
         LOG.info("Hello, your current emotion is " + currentEmotion + "!" +
                 " with a key of: " + surveyKey);
 
-        boolean goodKey = false;
-//        goodKey = responseKeyRepo.existsById(UUID.fromString(surveyKey));
-        goodKey = validateKey(surveyKey);
+        boolean validKey = false;
+        validKey = validateKey(surveyKey);
 
-        LOG.info("happiness - key is valid? " + goodKey);
+        LOG.info("happiness - key is valid? " + validKey);
 
-        // if yes - store happiness (and comments(?))
-        if (goodKey) {
+        // if yes - store happiness and comments
+        if (validKey) {
             boolean responseAdded = addResponse(currentEmotion, surveyKey);
 
             // add usercomments row and fill it in
+            addComments(surveyKey);
 
-            markKeyAsUsed(surveyKey);  // currently problematic
+            markKeyAsUsed(surveyKey);
 
             sendThankYou("someemailaddressfromsomewhere");
 
@@ -73,6 +86,25 @@ public class SurveyResponseController {
         return HttpResponse.ok("Hello, your current emotion is " + currentEmotion + "!" +
                                " with a key of: " + surveyKey);
 
+    }
+
+    boolean validateKey(String surveyKey) {
+
+        LOG.info("Validating key" + surveyKey);
+        Optional<ResponseKey> responseKey = responseKeyRepo.findById(UUID.fromString(surveyKey));
+        AtomicBoolean keyIsValid = new AtomicBoolean(false);
+
+        responseKey.ifPresent(key -> {
+            keyIsValid.set(!key.isUsed());
+        });
+
+        LOG.info("key is valid? " + keyIsValid);
+
+        return keyIsValid.get();
+
+    }
+
+    private void addComments(String surveyKey) {
     }
 
     boolean addResponse(String currentEmotion, String surveyKey) {
@@ -92,35 +124,11 @@ public class SurveyResponseController {
         return responseAdded;
     }
 
-    private boolean validateKey(String surveyKey) {
-
-        LOG.info("Validating key" + surveyKey);
-//        goodKey = responseKeyRepo.existsById(UUID.fromString(surveyKey));
-        Optional<ResponseKey> responseKey = responseKeyRepo.findById(UUID.fromString(surveyKey));
-//        LOG.info("response: " + response.get());
-//        boolean keyIsInDb = responseRepo.existsById(UUID.fromString(surveyKey));
-        boolean keyIsInDb = false;
-
-        if (responseKey.isPresent()) {
-            if (responseKey.get().isUsed()) {
-                keyIsInDb = true;
-            }
-        }
-
-//        responseKey.ifPresent(used -> {used.isUsed()});
-
-        LOG.info("key is valid? " + keyIsInDb);
-
-        return keyIsInDb;
-
-    }
-
     private void markKeyAsUsed(String surveyKey) {
 
         LOG.info("Marking key as used: " + surveyKey + " from responsekeys");
 
-        // can't remove this because response has it as a foreign key
-
+    // set used field to true
    //     responseKeyRepo.deleteById(UUID.fromString(surveyKey));
 
     }

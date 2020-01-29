@@ -1,8 +1,12 @@
 package com.objectcomputing.pulsesurvey.receive.responses;
 
+import com.objectcomputing.pulsesurvey.email.manager.GmailSender;
 import com.objectcomputing.pulsesurvey.model.Response;
+import com.objectcomputing.pulsesurvey.model.ResponseKey;
+import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
 import com.objectcomputing.pulsesurvey.repositories.ResponseRepository;
 import com.objectcomputing.pulsesurvey.send.surveys.SurveysControllerTest;
+import com.objectcomputing.pulsesurvey.template.manager.SurveyTemplateManager;
 import io.micronaut.core.io.buffer.ByteBuffer;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -40,14 +44,28 @@ class SurveyResponseControllerTest {
     @Inject
     SurveyResponseController itemUnderTest;
 
-    ResponseRepository mockRepository = mock(ResponseRepository.class);
+    ResponseRepository mockResponseRepository = mock(ResponseRepository.class);
+
+    ResponseKeyRepository mockResponseKeyRepository = mock(ResponseKeyRepository.class);
+
+    SurveyTemplateManager mockTemplateManager = mock(SurveyTemplateManager.class);
+
+    GmailSender mockGmailSender = mock(GmailSender.class);
 
     private static final Logger LOG = LoggerFactory.getLogger(SurveysControllerTest.class);
 
     @BeforeEach
     void setupTest() {
-        itemUnderTest.setResponseRepo(mockRepository);
-        reset(mockRepository);
+        itemUnderTest.setResponseRepo(mockResponseRepository);
+//        itemUnderTest.setGmailApi(gmailApiMock);
+        itemUnderTest.setResponseKeyRepo(mockResponseKeyRepository);
+//        itemUnderTest.setTemplateManager(mockTemplateManager);
+//        itemUnderTest.setGmailSender(mockGmailSender);
+//        reset(gmailApiMock);
+        reset(mockResponseKeyRepository);
+//        reset(mockTemplateManager);
+        reset(mockGmailSender);
+        reset(mockResponseRepository);
     }
 
     @Test
@@ -67,6 +85,44 @@ class SurveyResponseControllerTest {
     }
 
     @Test
+    void testValidateKey_validKey() {
+
+        String surveyKey =       "12345678-9123-4567-abcd-123456789abc";
+        String fakeResponseKey = "98765432-9876-9876-9876-987654321234";
+        boolean fakeUsed = false;
+
+        ResponseKey fakeResponseKeyObj = new ResponseKey();
+        fakeResponseKeyObj.setResponseKey(UUID.fromString(fakeResponseKey));
+        fakeResponseKeyObj.setUsed(fakeUsed);
+        fakeResponseKeyObj.setIssuedOn(LocalDateTime.of(2020, Month.JANUARY, 27, 1, 1));
+
+        when(mockResponseKeyRepository.findById(any()))
+                .thenReturn(java.util.Optional.of(fakeResponseKeyObj));
+
+        assertTrue(itemUnderTest.validateKey(surveyKey));
+
+    }
+
+    @Test
+    void testValidateKey_invalidKey() {
+
+        String surveyKey =       "12345678-9123-4567-abcd-123456789abc";
+        String fakeResponseKey = "98765432-9876-9876-9876-987654321234";
+        boolean fakeUsed = true;
+
+        ResponseKey fakeResponseKeyObj = new ResponseKey();
+        fakeResponseKeyObj.setResponseKey(UUID.fromString(fakeResponseKey));
+        fakeResponseKeyObj.setUsed(fakeUsed);
+        fakeResponseKeyObj.setIssuedOn(LocalDateTime.of(2020, Month.JANUARY, 27, 1, 1));
+
+        when(mockResponseKeyRepository.findById(any()))
+                .thenReturn(java.util.Optional.of(fakeResponseKeyObj));
+
+        assertFalse(itemUnderTest.validateKey(surveyKey));
+
+    }
+
+    @Test
     void testHappinessAddResponse() {
 
         String currentEmotion = "happyTest";
@@ -79,7 +135,7 @@ class SurveyResponseControllerTest {
         fakeResponse.setSelected(currentEmotion);
         fakeResponse.setCreatedOn(LocalDateTime.of(2020, Month.JANUARY, 27, 1, 1));
 
-        when(mockRepository.save(any())).thenReturn(fakeResponse);
+        when(mockResponseRepository.save(any())).thenReturn(fakeResponse);
 
         assertTrue(itemUnderTest.addResponse(currentEmotion, surveyKey));
 
@@ -98,7 +154,7 @@ class SurveyResponseControllerTest {
         fakeResponse.setSelected(currentEmotion);
         fakeResponse.setCreatedOn(LocalDateTime.of(2020, Month.JANUARY, 27, 1, 1));
 
-        when(mockRepository.save(any())).thenReturn(fakeResponse);
+        when(mockResponseRepository.save(any())).thenReturn(fakeResponse);
 
         HttpResponse<ByteBuffer> response = httpClient
                 .exchange(HttpRequest.GET(String.format("/happiness?currentEmotion=%s&surveyKey=%s",
