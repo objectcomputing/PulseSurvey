@@ -130,7 +130,7 @@ public class SurveysController {
         List<ResponseKey> keys = new ArrayList<ResponseKey>();
 
         for (int i = 0; i < howManyKeys; i++) {
-            keys.add(new ResponseKey(false));
+            keys.add(new ResponseKey());
         }
         LOG.info("Storing empty keys.");
         List<ResponseKey> returned = responseKeyRepo.saveAll(keys);

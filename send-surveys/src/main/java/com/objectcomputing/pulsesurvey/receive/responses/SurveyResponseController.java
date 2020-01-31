@@ -2,8 +2,10 @@ package com.objectcomputing.pulsesurvey.receive.responses;
 
 import com.objectcomputing.pulsesurvey.model.Response;
 import com.objectcomputing.pulsesurvey.model.ResponseKey;
+import com.objectcomputing.pulsesurvey.model.UserComments;
 import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
 import com.objectcomputing.pulsesurvey.repositories.ResponseRepository;
+import com.objectcomputing.pulsesurvey.repositories.UserCommentsRepository;
 import com.objectcomputing.pulsesurvey.template.manager.SurveyTemplateManager;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -24,10 +26,13 @@ public class SurveyResponseController {
     private static final Logger LOG = LoggerFactory.getLogger(SurveyResponseController.class);
 
     @Inject
+    private ResponseKeyRepository responseKeyRepo;
+
+    @Inject
     private ResponseRepository responseRepo;
 
     @Inject
-    private ResponseKeyRepository responseKeyRepo;
+    private UserCommentsRepository userCommentsRepo;
 
     @Inject
     private SurveyTemplateManager templateManager;
@@ -42,6 +47,10 @@ public class SurveyResponseController {
 
     public void setResponseRepo(ResponseRepository responseRepository) {
         this.responseRepo = responseRepository;
+    }
+
+    public void setUserCommentsRepo(UserCommentsRepository userCommentsRepository) {
+        this.userCommentsRepo = userCommentsRepository;
     }
 
     @Produces(MediaType.TEXT_PLAIN)
@@ -73,7 +82,7 @@ public class SurveyResponseController {
             boolean responseAdded = addResponse(currentEmotion, surveyKey);
 
             // add usercomments row and fill it in
-            addComments(surveyKey);
+            addUserComments(surveyKey);
 
             markKeyAsUsed(surveyKey);
 
@@ -92,19 +101,16 @@ public class SurveyResponseController {
 
         LOG.info("Validating key" + surveyKey);
         Optional<ResponseKey> responseKey = responseKeyRepo.findById(UUID.fromString(surveyKey));
-        AtomicBoolean keyIsValid = new AtomicBoolean(false);
+        AtomicBoolean isValid = new AtomicBoolean(false);
 
         responseKey.ifPresent(key -> {
-            keyIsValid.set(!key.isUsed());
+            isValid.set(!key.isUsed());
         });
 
-        LOG.info("key is valid? " + keyIsValid);
+        LOG.info("key is valid? " + isValid);
 
-        return keyIsValid.get();
+        return isValid.get();
 
-    }
-
-    private void addComments(String surveyKey) {
     }
 
     boolean addResponse(String currentEmotion, String surveyKey) {
@@ -124,13 +130,22 @@ public class SurveyResponseController {
         return responseAdded;
     }
 
+    private void addUserComments(String surveyKey) {
+
+        UserComments userComments = new UserComments();
+ //       userComments.setCommentText();
+    }
+
     private void markKeyAsUsed(String surveyKey) {
 
         LOG.info("Marking key as used: " + surveyKey + " from responsekeys");
 
-    // set used field to true
-   //     responseKeyRepo.deleteById(UUID.fromString(surveyKey));
+        Optional<ResponseKey> responseKey = responseKeyRepo.findById(UUID.fromString(surveyKey));
 
+        responseKey.ifPresent(responseKeyToSave -> {
+            responseKeyToSave.setUsed(true);
+            responseKeyRepo.update(responseKeyToSave);
+        });
     }
 
     private void sendThankYou(String emailAddress) {
