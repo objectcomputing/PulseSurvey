@@ -57,13 +57,13 @@ class SurveyResponseControllerTest {
     @BeforeEach
     void setupTest() {
         itemUnderTest.setResponseRepo(mockResponseRepository);
-//        itemUnderTest.setGmailApi(gmailApiMock);
         itemUnderTest.setResponseKeyRepo(mockResponseKeyRepository);
+//        itemUnderTest.setGmailApi(gmailApiMock);
 //        itemUnderTest.setTemplateManager(mockTemplateManager);
 //        itemUnderTest.setGmailSender(mockGmailSender);
 //        reset(gmailApiMock);
-        reset(mockResponseKeyRepository);
 //        reset(mockTemplateManager);
+        reset(mockResponseKeyRepository);
         reset(mockGmailSender);
         reset(mockResponseRepository);
     }
@@ -117,6 +117,25 @@ class SurveyResponseControllerTest {
 
         when(mockResponseKeyRepository.findById(any()))
                 .thenReturn(java.util.Optional.of(fakeResponseKeyObj));
+
+        assertFalse(itemUnderTest.validateKey(surveyKey));
+
+    }
+
+    @Test
+    void testValidateKey_absentKey() {
+
+        String surveyKey =       "12345678-9123-4567-abcd-123456789abc";
+        String fakeResponseKey = "98765432-9876-9876-9876-987654321234";
+        boolean fakeUsed = true;
+
+        ResponseKey fakeResponseKeyObj = new ResponseKey();
+        fakeResponseKeyObj.setResponseKey(UUID.fromString(fakeResponseKey));
+        fakeResponseKeyObj.setUsed(fakeUsed);
+        fakeResponseKeyObj.setIssuedOn(LocalDateTime.of(2020, Month.JANUARY, 27, 1, 1));
+
+        when(mockResponseKeyRepository.findById(any()))
+                .thenReturn(java.util.Optional.empty());
 
         assertFalse(itemUnderTest.validateKey(surveyKey));
 
