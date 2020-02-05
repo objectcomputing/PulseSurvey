@@ -25,6 +25,8 @@ import javax.inject.Inject;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,6 +45,9 @@ class SurveyResponseControllerTest {
 
     @Inject
     SurveyResponseController itemUnderTest;
+
+    @Inject
+    private ResponseKeyRepository responseKeyRepo;
 
     ResponseRepository mockResponseRepository = mock(ResponseRepository.class);
 
@@ -157,6 +162,20 @@ class SurveyResponseControllerTest {
         when(mockResponseRepository.save(any())).thenReturn(fakeResponse);
 
         assertTrue(itemUnderTest.addResponse(currentEmotion, surveyKey));
+
+    }
+
+    @Test
+    void testMarkKeyAsUsed() {
+
+        ResponseKey key = new ResponseKey();
+
+        // insert key into real responsekeys table
+        ResponseKey returnedKey = responseKeyRepo.save(key);
+        //run test against real table
+
+
+        itemUnderTest.markKeyAsUsed(returnedKey.getResponseKey().toString());
 
     }
 

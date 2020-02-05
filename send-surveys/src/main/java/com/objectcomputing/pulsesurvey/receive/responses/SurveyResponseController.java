@@ -136,7 +136,7 @@ public class SurveyResponseController {
  //       userComments.setCommentText();
     }
 
-    private void markKeyAsUsed(String surveyKey) {
+    void markKeyAsUsed(String surveyKey) {
 
         LOG.info("Marking key as used: " + surveyKey + " from responsekeys");
 

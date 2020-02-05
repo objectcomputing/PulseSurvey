@@ -1,21 +1,22 @@
-
-
-create extension pgcrypto;
-CREATE TABLE responseKeys(
-   responseKey UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-   issuedOn TIMESTAMPTZ
+drop table if exists responsekeys;
+CREATE TABLE responsekeys(
+   responseKey varchar PRIMARY KEY,
+   issuedOn TIMESTAMPTZ,
+   used boolean
 );
 
+drop table if exists response;
 CREATE TABLE response(
-   responseId UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-   responseKey UUID REFERENCES keys(responseKey),
-   selected INTEGER,
+   responseId varchar PRIMARY KEY,
+   responseKey varchar REFERENCES responsekeys(responseKey),
+   selected varchar,
    createdOn TIMESTAMPTZ
 );
 
+drop table if exists userComments ;
 CREATE TABLE userComments (
-   commentId UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-   responseKey UUID REFERENCES keys(responseKey),
+   commentId varchar PRIMARY KEY,
+   responseKey varchar REFERENCES responsekeys(responseKey),
    commentText VARCHAR,
    createdOn TIMESTAMPTZ
 );
