@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Controller("/happiness")
 public class SurveyResponseController {
@@ -86,7 +87,7 @@ public class SurveyResponseController {
 
             markKeyAsUsed(surveyKey);
 
-            sendThankYou("someemailaddressfromsomewhere");
+            sendThankYou();
 
         } else {
             LOG.warn("This key is not valid ");
@@ -136,21 +137,23 @@ public class SurveyResponseController {
  //       userComments.setCommentText();
     }
 
-    private void markKeyAsUsed(String surveyKey) {
+    ResponseKey markKeyAsUsed(String surveyKey) {
 
         LOG.info("Marking key as used: " + surveyKey + " from responsekeys");
 
+        AtomicReference<ResponseKey> returnedResponseKey = new AtomicReference<>(new ResponseKey());
         Optional<ResponseKey> responseKey = responseKeyRepo.findById(UUID.fromString(surveyKey));
 
         responseKey.ifPresent(responseKeyToSave -> {
             responseKeyToSave.setUsed(true);
-            responseKeyRepo.update(responseKeyToSave);
+            returnedResponseKey.set(responseKeyRepo.update(responseKeyToSave));
         });
+        return returnedResponseKey.get();
     }
 
-    private void sendThankYou(String emailAddress) {
+    private void sendThankYou() {
 
-        LOG.info("Sending thank you to " + emailAddress);
+        LOG.info("Sending thank you to web page " );
 
 
     }

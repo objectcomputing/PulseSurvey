@@ -25,6 +25,7 @@ import javax.inject.Inject;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -184,6 +185,24 @@ class SurveyResponseControllerTest {
         response.equals("Hello, your current emotion is " + currentEmotion + "!" +
                 " with a key of: " + surveyKey);
 
+    }
+
+    @Test
+    void testMarkKeyAsUsed() {
+
+        String fakeKey = "98765432-9876-9876-9876-987654321234";
+        ResponseKey fakeResponseKey = new ResponseKey();
+        fakeResponseKey.setResponseKey(UUID.fromString(fakeKey));
+        fakeResponseKey.setIssuedOn(LocalDateTime.of(2020, Month.JANUARY, 27, 1, 1));
+        fakeResponseKey.setUsed(false);
+
+        when(mockResponseKeyRepository.findById(any())).thenReturn(Optional.of(fakeResponseKey));
+
+        when(mockResponseKeyRepository.update(any())).thenReturn(fakeResponseKey);
+
+        itemUnderTest.markKeyAsUsed(fakeResponseKey.getResponseKey().toString());
+//        LOG.debug("Response Key is "+ (returnedKey.isUsed()?"used":"not used"));
+        assertTrue(fakeResponseKey.isUsed());
     }
 
 }
