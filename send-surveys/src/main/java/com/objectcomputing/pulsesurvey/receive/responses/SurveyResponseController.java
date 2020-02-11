@@ -7,15 +7,22 @@ import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
 import com.objectcomputing.pulsesurvey.repositories.ResponseRepository;
 import com.objectcomputing.pulsesurvey.repositories.UserCommentsRepository;
 import com.objectcomputing.pulsesurvey.template.manager.SurveyTemplateManager;
+import io.micronaut.context.annotation.Value;
+import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
+import io.micronaut.views.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -66,8 +73,8 @@ public class SurveyResponseController {
 
     }
 
-    @Produces(MediaType.TEXT_PLAIN)
     @Get
+    @Produces(MediaType.TEXT_PLAIN)
     HttpResponse<String> happiness(String currentEmotion, String surveyKey) {
 
         LOG.info("Hello, your current emotion is " + currentEmotion + "!" +
@@ -80,22 +87,41 @@ public class SurveyResponseController {
 
         // if yes - store happiness and comments
         if (validKey) {
-            boolean responseAdded = addResponse(currentEmotion, surveyKey);
+            boolean responseAdded = saveResponse(currentEmotion, surveyKey);
 
-            // add usercomments row and fill it in
-            addUserComments(surveyKey);
+            if (responseAdded) {
+                markKeyAsUsed(surveyKey);
 
-            markKeyAsUsed(surveyKey);
-
-            sendThankYou();
-
+                try {
+                    HttpResponse.redirect(new URI("/happiness/comment?surveyKey="+surveyKey));
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                    LOG.error("unable to redirect to /happiness/commentBlock " + e.getMessage());
+                }
+            }
         } else {
-            LOG.warn("This key is not valid ");
+            LOG.warn("This key is not valid: " + surveyKey);
         }
 
         return HttpResponse.ok("Hello, your current emotion is " + currentEmotion + "!" +
                                " with a key of: " + surveyKey);
+    }
 
+    @Get(value = "comment")
+    @View("comment")
+    public HttpResponse displayComments(String surveyKey) {
+        // TODO fill stub and return something useful, like the comment html page
+        // Build up form that has a comment block section (name = comment) action to be post to commentBLock
+        LOG.info("redirect to comment surveyKey = " + surveyKey);
+        return HttpResponse.ok(CollectionUtils.mapOf("surveyKey", surveyKey));
+    }
+
+    @Post(value = "comment")
+    @View("thankyou.html")
+    private HttpResponse<ByteBuffer> sendThankYouWithCommentBlock(@Value("comment") String comment) {
+        LOG.warn("The user has commented: " + comment);
+        // put comment into the db
+        return HttpResponse.ok(); // Make thankyou.html
     }
 
     boolean validateKey(String surveyKey) {
@@ -114,7 +140,7 @@ public class SurveyResponseController {
 
     }
 
-    boolean addResponse(String currentEmotion, String surveyKey) {
+    boolean saveResponse(String currentEmotion, String surveyKey) {
 
         boolean responseAdded = false;
         Response response = new Response();
@@ -125,7 +151,6 @@ public class SurveyResponseController {
 
         LOG.info("Adding response " + currentEmotion + "  ");
 
-//        if (response.getCreatedOn() != null) responseAdded = true;
         if (response.getResponseId() != null) responseAdded = true;
 
         return responseAdded;
@@ -153,7 +178,7 @@ public class SurveyResponseController {
 
     private void sendThankYou() {
 
-        LOG.info("Sending thank you to web page " );
+        LOG.info("Sending final thank you web page " );
 
 
     }

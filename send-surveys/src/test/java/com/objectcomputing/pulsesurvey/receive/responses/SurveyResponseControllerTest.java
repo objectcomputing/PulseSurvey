@@ -143,7 +143,7 @@ class SurveyResponseControllerTest {
     }
 
     @Test
-    void testHappinessAddResponse() {
+    void testHappinessSaveResponse() {
 
         String currentEmotion = "happyTest";
         String surveyKey =       "12345678-9123-4567-abcd-123456789abc";
@@ -157,7 +157,7 @@ class SurveyResponseControllerTest {
 
         when(mockResponseRepository.save(any())).thenReturn(fakeResponse);
 
-        assertTrue(itemUnderTest.addResponse(currentEmotion, surveyKey));
+        assertTrue(itemUnderTest.saveResponse(currentEmotion, surveyKey));
 
     }
 
@@ -201,7 +201,7 @@ class SurveyResponseControllerTest {
         when(mockResponseKeyRepository.update(any())).thenReturn(fakeResponseKey);
 
         itemUnderTest.markKeyAsUsed(fakeResponseKey.getResponseKey().toString());
-//        LOG.debug("Response Key is "+ (returnedKey.isUsed()?"used":"not used"));
+        LOG.debug("Fake Response Key is "+ (fakeResponseKey.isUsed()?"used":"not used"));
         assertTrue(fakeResponseKey.isUsed());
     }
 

@@ -1,6 +1,12 @@
 micronaut:
   application:
     name: send-surveys
+  router:
+    static-resources:
+      default:
+        enabled: true
+        mapping: "/**"
+        paths: "classpath:static"
 root: src/main/resources
 
 ---
