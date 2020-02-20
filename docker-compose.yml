@@ -1,0 +1,14 @@
+version: '3'
+services:
+  postgresql:
+    image: postgres:11.6
+    environment:
+      POSTGRES_DB: pulsesurveydb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./server/src/main/resources/db/2019.12.18.14.06.00_createInitialDb.sql:/docker-entrypoint-initdb.d/2019.12.18.14.06.00_createInitialDb.sql
+    ports:
+      - "5432:5432"
+    container_name: pulsesurveydb
+    

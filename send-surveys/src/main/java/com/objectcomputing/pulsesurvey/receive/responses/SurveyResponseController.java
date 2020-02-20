@@ -107,7 +107,7 @@ public class SurveyResponseController {
                                " with a key of: " + surveyKey);
     }
 
-    @Get(value = "comment")
+    @Get("comment")
     @View("comment")
     public HttpResponse displayComments(String surveyKey) {
         // TODO fill stub and return something useful, like the comment html page
@@ -116,23 +116,25 @@ public class SurveyResponseController {
         return HttpResponse.ok(CollectionUtils.mapOf("surveyKey", surveyKey));
     }
 
-    @Post(value = "comment")
+    @Post("comment")
     @View("thankyou.html")
-    private HttpResponse<ByteBuffer> sendThankYouWithCommentBlock(@Value("comment") String comment) {
+    public HttpResponse<ByteBuffer> sendThankYouWithCommentBlock(@Value("comment") String comment) {
         LOG.warn("The user has commented: " + comment);
-        // put comment into the db
+        // put comment into the db using the survey key
         return HttpResponse.ok(); // Make thankyou.html
     }
 
     boolean validateKey(String surveyKey) {
 
-        LOG.info("Validating key" + surveyKey);
+        LOG.info("Validating key " + surveyKey);
         Optional<ResponseKey> responseKey = responseKeyRepo.findById(UUID.fromString(surveyKey));
         AtomicBoolean isValid = new AtomicBoolean(false);
 
         responseKey.ifPresent(key -> {
             isValid.set(!key.isUsed());
         });
+
+        LOG.debug("Survey Key " + surveyKey + (isValid.get()?" is used":" is not used"));
 
         LOG.info("key is valid? " + isValid);
 
@@ -171,6 +173,7 @@ public class SurveyResponseController {
 
         responseKey.ifPresent(responseKeyToSave -> {
             responseKeyToSave.setUsed(true);
+ // this next line is blowing up - micronaut data issue
             returnedResponseKey.set(responseKeyRepo.update(responseKeyToSave));
         });
         return returnedResponseKey.get();

@@ -6,9 +6,7 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      background-color: #2559a7;
-
-<!--      flex-direction: column;-->
+      background-color: #2158a9;
     }
 
     .thank-you {
@@ -46,5 +44,4 @@
       font-family: 'Roboto', Verdana, sans-serif;
       font-weight: 200;
       color: #000000;
-<!--      align-self: center;-->
     }
