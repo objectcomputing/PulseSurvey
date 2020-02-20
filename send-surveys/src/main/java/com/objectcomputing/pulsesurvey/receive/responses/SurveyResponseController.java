@@ -179,6 +179,8 @@ public class SurveyResponseController {
         return returnedResponseKey.get();
     }
 
+    @Get("thanks")
+    @View("thankyou")
     private void sendThankYou() {
 
         LOG.info("Sending final thank you web page " );
