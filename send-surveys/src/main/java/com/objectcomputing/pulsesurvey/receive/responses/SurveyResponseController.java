@@ -114,10 +114,11 @@ public class SurveyResponseController {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @View("thankyou")
     public HttpResponse sendThankYouWithCommentBlock
-            (@Value("userComments") String userComments
-            ) {
+            (@Value("userComments") String userComments,
+             @Value("surveyKey") String surveyKey) {
 
         LOG.info("The user has commented: " + userComments);
+        LOG.info("With surveyKey: " + surveyKey);
         // put comment into the db using the survey key
 
         return HttpResponse.ok();
