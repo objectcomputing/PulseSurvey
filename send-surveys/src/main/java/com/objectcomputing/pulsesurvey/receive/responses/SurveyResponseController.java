@@ -11,6 +11,7 @@ import io.micronaut.context.annotation.Value;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
@@ -22,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -49,10 +49,6 @@ public class SurveyResponseController {
         this.responseKeyRepo = responseKeyRepository;
     }
 
-    public void setTemplateManager(SurveyTemplateManager surveyTemplateManager) {
-        this.templateManager = surveyTemplateManager;
-    }
-
     public void setResponseRepo(ResponseRepository responseRepository) {
         this.responseRepo = responseRepository;
     }
@@ -70,7 +66,6 @@ public class SurveyResponseController {
 
         return HttpResponse.ok("Hello, your current emotion is " + currentEmotion + "!" +
                                " with a key of: " + surveyKey);
-
     }
 
     @Get
@@ -110,18 +105,31 @@ public class SurveyResponseController {
     @Get("comment")
     @View("comment")
     public HttpResponse displayComments(String surveyKey) {
-        // TODO fill stub and return something useful, like the comment html page
-        // Build up form that has a comment block section (name = comment) action to be post to commentBLock
+
         LOG.info("redirect to comment surveyKey = " + surveyKey);
         return HttpResponse.ok(CollectionUtils.mapOf("surveyKey", surveyKey));
     }
 
     @Post("comment")
-    @View("thankyou.html")
-    public HttpResponse<ByteBuffer> sendThankYouWithCommentBlock(@Value("comment") String comment) {
-        LOG.warn("The user has commented: " + comment);
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @View("thankyou")
+    public HttpResponse sendThankYouWithCommentBlock
+            (@Value("userComments") String userComments
+            ) {
+
+        LOG.info("The user has commented: " + userComments);
         // put comment into the db using the survey key
-        return HttpResponse.ok(); // Make thankyou.html
+
+        return HttpResponse.ok();
+    }
+
+    @Get("thanks")
+    @View("thankyou")
+    public HttpResponse sendThankYou() {
+
+        LOG.info("Sending final thank you web page " );
+        return HttpResponse.ok();
+
     }
 
     boolean validateKey(String surveyKey) {
@@ -139,7 +147,6 @@ public class SurveyResponseController {
         LOG.info("key is valid? " + isValid);
 
         return isValid.get();
-
     }
 
     boolean saveResponse(String currentEmotion, String surveyKey) {
@@ -177,15 +184,6 @@ public class SurveyResponseController {
             returnedResponseKey.set(responseKeyRepo.update(responseKeyToSave));
         });
         return returnedResponseKey.get();
-    }
-
-    @Get("thanks")
-    @View("thankyou")
-    private void sendThankYou() {
-
-        LOG.info("Sending final thank you web page " );
-
-
     }
 
 }
