@@ -73,8 +73,6 @@ public class SurveysController {
         LOG.info("post survey.getTemplateName(): " + sendSurveysCommand.getTemplateName());
         LOG.info("post survey.getPercentOfEmails(): " + sendSurveysCommand.getPercentOfEmails());
 
-        // to get aws environment vars:
-        //  System.getenv("NAME_OF_YOUR_ENV_VARIABLE") // NOTE: getenv returns a string
         LOG.info("survey.percentOfEmails: " + sendSurveysCommand.getPercentOfEmails());
         int percentOfEmailsToGet = Integer.parseInt(sendSurveysCommand.getPercentOfEmails());
         LOG.info("percentOfEmailsToGet: " + percentOfEmailsToGet);
@@ -121,7 +119,6 @@ public class SurveysController {
         for (int i = 0; i < numberOfAddressesRequested; i++) {
             randomSubsetEmailAddresses.add(emailAddresses.get(i));
         }
-        //      return emailAddresses;
         return randomSubsetEmailAddresses;
     }
 

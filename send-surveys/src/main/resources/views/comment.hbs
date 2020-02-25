@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>Thanks, comments?</title>
+
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+    <link rel="icon" href="images/favicon.png"/>
+
+</head>
+
+<body>
+    <form action="/happiness/userComments" method="post">
+
+        <div class="wrapper">
+            <div class="thank-you">THANK YOU!!</div>
+            <div class="received-feedback">We have received your feedback and have recorded your feeling</div>
+            <div class="comments">Do you have more to say? Leave a comment below.</div>
+                <input type="hidden" name="surveyKey" value="{{surveyKey}}">
+                <textarea class="comment-block"
+                        name="userComments"
+                ></textarea>
+            <div>
+                <input type="submit" value="Submit">
+            </div>
+        </div>
+
+    </form>
+</body>
+</html>

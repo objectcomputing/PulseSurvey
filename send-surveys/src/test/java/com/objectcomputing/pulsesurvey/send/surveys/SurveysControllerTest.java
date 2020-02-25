@@ -79,7 +79,7 @@ public class SurveysControllerTest {
     List<ResponseKey> generateFakeResponseKeys(int size) {
         List<ResponseKey> toReturn = new ArrayList<>(size);
         for (int count = 0; count < size; count++) {
-            toReturn.add(new ResponseKey(UUID.randomUUID(), LocalDateTime.now()));
+            toReturn.add(new ResponseKey(UUID.randomUUID(), LocalDateTime.now(), false));
         }
         return toReturn;
     }

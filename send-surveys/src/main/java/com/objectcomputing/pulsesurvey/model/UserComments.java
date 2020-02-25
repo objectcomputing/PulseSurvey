@@ -1,24 +1,34 @@
 package com.objectcomputing.pulsesurvey.model;
 
+import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.DateCreated;
 import io.micronaut.data.annotation.Id;
 import org.joda.time.DateTimeZone;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Entity
+@Table(name = "usercomments")
 public class UserComments {
 
     @Id
+    @Column(name="commentid")
+    @AutoPopulated
     private UUID commentId;
 
-    @Column
+    @Column(name="responsekey")
     private UUID responseKey;
 
-    @Column
+    @Column(name="commenttext")
     private String commentText;
 
-    @Column
-    private DateTimeZone createdOn;
+    @Column(name="createdon")
+    @DateCreated
+    private LocalDateTime createdOn;
 
     public UUID getCommentId() {
         return commentId;
@@ -44,18 +54,18 @@ public class UserComments {
         this.commentText = commentText;
     }
 
-    public DateTimeZone getCreatedOn() {
+    public LocalDateTime getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(DateTimeZone createdOn) {
+    public void setCreatedOn(LocalDateTime createdOn) {
         this.createdOn = createdOn;
     }
 
     public UserComments() {
     }
 
-    public UserComments(UUID commentId, UUID responseKey, String commentText, DateTimeZone createdOn) {
+    public UserComments(UUID commentId, UUID responseKey, String commentText, LocalDateTime createdOn) {
         this.commentId = commentId;
         this.responseKey = responseKey;
         this.commentText = commentText;
