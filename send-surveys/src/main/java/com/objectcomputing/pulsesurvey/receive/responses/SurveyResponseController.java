@@ -110,7 +110,7 @@ public class SurveyResponseController {
         return HttpResponse.ok(CollectionUtils.mapOf("surveyKey", surveyKey));
     }
 
-    @Post("comment")
+    @Post("userComments")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @View("thankyou")
     public HttpResponse sendThankYouWithCommentBlock
