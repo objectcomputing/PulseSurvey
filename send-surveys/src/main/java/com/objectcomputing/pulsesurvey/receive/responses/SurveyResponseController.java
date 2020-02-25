@@ -41,9 +41,9 @@ public class SurveyResponseController {
 
     @Inject
     private UserCommentsRepository userCommentsRepo;
-
-    @Inject
-    private SurveyTemplateManager templateManager;
+//
+//    @Inject
+//    private SurveyTemplateManager templateManager;
 
     public void setResponseKeyRepo(ResponseKeyRepository responseKeyRepository) {
         this.responseKeyRepo = responseKeyRepository;
@@ -61,10 +61,10 @@ public class SurveyResponseController {
     @Get("/received")
     HttpResponse<String> happinessReceived(String currentEmotion, String surveyKey) {
 
-        LOG.info("Hello, your current emotion is " + currentEmotion + "!" +
+        LOG.info("Hello, I have received your emotion of: " + currentEmotion + "!" +
                 " with a key of: " + surveyKey);
 
-        return HttpResponse.ok("Hello, your current emotion is " + currentEmotion + "!" +
+        return HttpResponse.ok("Hello, I have received your emotion of: " + currentEmotion + "!" +
                                " with a key of: " + surveyKey);
     }
 
@@ -88,25 +88,26 @@ public class SurveyResponseController {
                 markKeyAsUsed(surveyKey);
 
                 try {
-                    HttpResponse.redirect(new URI("/happiness/comment?surveyKey="+surveyKey));
+                    LOG.info("redirecting to /happiness/comment");
+                    return HttpResponse.redirect(new URI("/happiness/comment?surveyKey="+surveyKey));
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
-                    LOG.error("unable to redirect to /happiness/commentBlock " + e.getMessage());
+                    LOG.error("unable to redirect to /happiness/comment " + e.getMessage());
                 }
             }
         } else {
             LOG.warn("This key is not valid: " + surveyKey);
         }
 
-        return HttpResponse.ok("Hello, your current emotion is " + currentEmotion + "!" +
-                               " with a key of: " + surveyKey);
+        return HttpResponse.ok("Hello, your current emotion of " + currentEmotion + "!" +
+                               " with a key of: " + surveyKey + " is duly noted.");
     }
 
     @Get("comment")
     @View("comment")
     public HttpResponse displayComments(String surveyKey) {
 
-        LOG.info("redirect to comment surveyKey = " + surveyKey);
+        LOG.info("in /comment. surveyKey = " + surveyKey);
         return HttpResponse.ok(CollectionUtils.mapOf("surveyKey", surveyKey));
     }
 
@@ -120,6 +121,7 @@ public class SurveyResponseController {
         LOG.info("The user has commented: " + userComments);
         LOG.info("With surveyKey: " + surveyKey);
         // put comment into the db using the survey key
+        saveUserComment(surveyKey, userComments);
 
         return HttpResponse.ok();
     }
@@ -166,10 +168,12 @@ public class SurveyResponseController {
         return responseAdded;
     }
 
-    private void addUserComments(String surveyKey) {
+    private void saveUserComment(String surveyKey, String comments) {
 
         UserComments userComments = new UserComments();
- //       userComments.setCommentText();
+        userComments.setCommentText(comments);
+        userComments.setResponseKey(UUID.fromString(surveyKey));
+        userCommentsRepo.save(userComments);
     }
 
     ResponseKey markKeyAsUsed(String surveyKey) {
