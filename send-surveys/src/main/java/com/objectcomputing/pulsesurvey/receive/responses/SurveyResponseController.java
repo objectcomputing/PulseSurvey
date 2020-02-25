@@ -6,7 +6,6 @@ import com.objectcomputing.pulsesurvey.model.UserComments;
 import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
 import com.objectcomputing.pulsesurvey.repositories.ResponseRepository;
 import com.objectcomputing.pulsesurvey.repositories.UserCommentsRepository;
-import com.objectcomputing.pulsesurvey.template.manager.SurveyTemplateManager;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.http.HttpResponse;
@@ -41,9 +40,6 @@ public class SurveyResponseController {
 
     @Inject
     private UserCommentsRepository userCommentsRepo;
-//
-//    @Inject
-//    private SurveyTemplateManager templateManager;
 
     public void setResponseKeyRepo(ResponseKeyRepository responseKeyRepository) {
         this.responseKeyRepo = responseKeyRepository;
@@ -100,7 +96,7 @@ public class SurveyResponseController {
         }
 
         return HttpResponse.ok("Hello, your current emotion of " + currentEmotion + "!" +
-                               " with a key of: " + surveyKey + " is duly noted.");
+                               " is duly noted.");
     }
 
     @Get("comment")
@@ -185,7 +181,6 @@ public class SurveyResponseController {
 
         responseKey.ifPresent(responseKeyToSave -> {
             responseKeyToSave.setUsed(true);
- // this next line is blowing up - micronaut data issue
             returnedResponseKey.set(responseKeyRepo.update(responseKeyToSave));
         });
         return returnedResponseKey.get();
