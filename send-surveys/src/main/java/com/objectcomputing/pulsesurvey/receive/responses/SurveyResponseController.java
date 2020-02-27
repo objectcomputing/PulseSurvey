@@ -95,8 +95,7 @@ public class SurveyResponseController {
             LOG.warn("This key is not valid: " + surveyKey);
         }
 
-        return HttpResponse.ok("Hello, your current emotion of " + currentEmotion + "!" +
-                               " is duly noted.");
+        return HttpResponse.ok("This key has already been used. ");
     }
 
     @Get("comment")
