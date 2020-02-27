@@ -1,16 +1,22 @@
 package com.objectcomputing.pulsesurvey.receive.responses;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.objectcomputing.pulsesurvey.email.manager.GmailSender;
 import com.objectcomputing.pulsesurvey.model.Response;
 import com.objectcomputing.pulsesurvey.model.ResponseKey;
+import com.objectcomputing.pulsesurvey.model.UserComments;
 import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
 import com.objectcomputing.pulsesurvey.repositories.ResponseRepository;
+import com.objectcomputing.pulsesurvey.repositories.UserCommentsRepository;
 import com.objectcomputing.pulsesurvey.send.surveys.SurveysControllerTest;
 import com.objectcomputing.pulsesurvey.template.manager.SurveyTemplateManager;
 import io.micronaut.core.io.buffer.ByteBuffer;
+import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.client.RxHttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.annotation.MicronautTest;
@@ -25,6 +31,8 @@ import javax.inject.Inject;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -49,7 +57,7 @@ class SurveyResponseControllerTest {
 
     ResponseKeyRepository mockResponseKeyRepository = mock(ResponseKeyRepository.class);
 
-    SurveyTemplateManager mockTemplateManager = mock(SurveyTemplateManager.class);
+    UserCommentsRepository mockUserCommentsRepository = mock(UserCommentsRepository.class);
 
     GmailSender mockGmailSender = mock(GmailSender.class);
 
@@ -59,6 +67,7 @@ class SurveyResponseControllerTest {
     void setupTest() {
         itemUnderTest.setResponseRepo(mockResponseRepository);
         itemUnderTest.setResponseKeyRepo(mockResponseKeyRepository);
+        itemUnderTest.setUserCommentsRepo(mockUserCommentsRepository);
 //        itemUnderTest.setGmailApi(gmailApiMock);
 //        itemUnderTest.setTemplateManager(mockTemplateManager);
 //        itemUnderTest.setGmailSender(mockGmailSender);
@@ -67,6 +76,7 @@ class SurveyResponseControllerTest {
         reset(mockResponseKeyRepository);
         reset(mockGmailSender);
         reset(mockResponseRepository);
+        reset(mockUserCommentsRepository);
     }
 
     @Test
@@ -203,6 +213,84 @@ class SurveyResponseControllerTest {
         itemUnderTest.markKeyAsUsed(fakeResponseKey.getResponseKey().toString());
         LOG.debug("Fake Response Key is "+ (fakeResponseKey.isUsed()?"used":"not used"));
         assertTrue(fakeResponseKey.isUsed());
+    }
+
+    @Test
+    void testDisplayComments() {
+
+        String surveyKey = "123";
+
+        HttpResponse<ByteBuffer> response = httpClient
+                .exchange(HttpRequest.GET(String.format("/happiness/comment?&surveyKey=%s", surveyKey)))
+                .blockingFirst();
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
+    void testSaveUserComment() {
+
+        String fakeComments = "Here are some fake comments - Test";
+        String surveyKey =       "12345678-9123-4567-abcd-123456789abc";
+        String fakeResponseKey = "98765432-9876-9876-9876-987654321234";
+
+        UserComments fakeUserComments = new UserComments();
+        fakeUserComments.setCommentId(UUID.fromString(fakeResponseKey));
+        fakeUserComments.setResponseKey(UUID.fromString(surveyKey));
+        fakeUserComments.setCommentText(fakeComments);
+        fakeUserComments.setCreatedOn(LocalDateTime.of(2020, Month.JANUARY, 27, 1, 1));
+
+        when(mockUserCommentsRepository.save(any())).thenReturn(fakeUserComments);
+
+        assertTrue(itemUnderTest.saveUserComment(surveyKey, fakeComments));
+
+    }
+
+    @Test
+    void testSendThankYouWithCommentBlock() {
+
+        String userComments = "fake user comments";
+        String fakeComments = "Here are some fake comments - Test";
+        String surveyKey =       "12345678-9123-4567-abcd-123456789abc";
+        String fakeResponseKey = "98765432-9876-9876-9876-987654321234";
+
+        UserComments fakeUserComments = new UserComments();
+        fakeUserComments.setCommentId(UUID.fromString(fakeResponseKey));
+        fakeUserComments.setResponseKey(UUID.fromString(surveyKey));
+        fakeUserComments.setCommentText(fakeComments);
+        fakeUserComments.setCreatedOn(LocalDateTime.of(2020, Month.JANUARY, 27, 1, 1));
+        Map<String, String> fakeBody = new HashMap<String, String>() {{
+            put("userComments",userComments);
+            put("surveyKey", surveyKey);
+        }};
+
+        when(mockUserCommentsRepository.save(any())).thenReturn(fakeUserComments);
+
+//todo should we just call this directly?
+//        HttpResponse resp = itemUnderTest.sendThankYouWithCommentBlock(userComments, surveyKey);
+//        assertEquals(HttpStatus.OK, resp.getStatus());
+
+        HttpResponse response = httpClient
+                .exchange(HttpRequest.POST("/happiness/userComments", fakeBody)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .blockingFirst();
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
+    void testSendThankYou() {
+
+        String surveyKey = "123";
+
+        HttpResponse<ByteBuffer> response = httpClient
+                .exchange(HttpRequest.GET(String.format("/happiness/thanks")))
+                .blockingFirst();
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+
     }
 
 }
