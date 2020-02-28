@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -95,13 +96,14 @@ public class SurveyResponseController {
             LOG.warn("This key is not valid: " + surveyKey);
         }
 
-        return HttpResponse.ok("This key has already been used. ");
+        return HttpResponse.ok("This key has already been used.");
     }
 
     @Get("comment")
     @View("comment")
     public HttpResponse displayComments(String surveyKey) {
 
+        // check to see if there is already a comment for this key
         LOG.info("in /comment. surveyKey = " + surveyKey);
         return HttpResponse.ok(CollectionUtils.mapOf("surveyKey", surveyKey));
     }
@@ -116,9 +118,14 @@ public class SurveyResponseController {
         LOG.info("The user has commented: " + userComments);
         LOG.info("With surveyKey: " + surveyKey);
         // put comment into the db using the survey key
-        saveUserComment(surveyKey, userComments);
-
-        return HttpResponse.ok();
+        // first check to see if there is currently a comment
+        boolean alreadyIsComment = checkForComment(surveyKey);
+        if (!alreadyIsComment) {
+            saveUserComment(surveyKey, userComments);
+            return HttpResponse.ok();
+        } else {
+            return HttpResponse.ok("This key has already been used.");
+        }
     }
 
     @Get("thanks")
@@ -163,12 +170,23 @@ public class SurveyResponseController {
         return responseAdded;
     }
 
-    private void saveUserComment(String surveyKey, String comments) {
+    private boolean checkForComment(String surveyKey) {
+
+        LOG.info("Validating comment " + surveyKey);
+        List<UserComments> userComments = userCommentsRepo.findComments(surveyKey);
+
+        boolean isPresent = false;
+        isPresent = !userComments.isEmpty();
+        return isPresent;
+
+    }
+
+    private void saveUserComment(String surveyKey, String commentText) {
 
         UserComments userComments = new UserComments();
-        userComments.setCommentText(comments);
+        userComments.setCommentText(commentText);
         userComments.setResponseKey(UUID.fromString(surveyKey));
-        userCommentsRepo.save(userComments);
+        userComments = userCommentsRepo.save(userComments);
     }
 
     ResponseKey markKeyAsUsed(String surveyKey) {
