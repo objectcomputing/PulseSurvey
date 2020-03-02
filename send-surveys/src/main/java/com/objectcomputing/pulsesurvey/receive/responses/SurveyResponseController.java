@@ -86,7 +86,7 @@ public class SurveyResponseController {
 
                 try {
                     LOG.info("redirecting to /happiness/comment");
-                    return HttpResponse.redirect(new URI("/happiness/comment?surveyKey="+surveyKey));
+                    return HttpResponse.temporaryRedirect(new URI("/happiness/comment?surveyKey="+surveyKey));
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                     LOG.error("unable to redirect to /happiness/comment " + e.getMessage());
@@ -111,9 +111,7 @@ public class SurveyResponseController {
     @Post("userComments")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @View("thankyou")
-    public HttpResponse sendThankYouWithCommentBlock
-            (@Value("userComments") String userComments,
-             @Value("surveyKey") String surveyKey) {
+    public HttpResponse sendThankYouWithCommentBlock (String userComments, String surveyKey) {
 
         LOG.info("The user has commented: " + userComments);
         LOG.info("With surveyKey: " + surveyKey);
