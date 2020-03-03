@@ -6,7 +6,6 @@ import com.objectcomputing.pulsesurvey.model.UserComments;
 import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
 import com.objectcomputing.pulsesurvey.repositories.ResponseRepository;
 import com.objectcomputing.pulsesurvey.repositories.UserCommentsRepository;
-import io.micronaut.context.annotation.Value;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
