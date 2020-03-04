@@ -14,7 +14,9 @@ import java.util.Map;
 import java.util.HashMap;
 import java.lang.Math;
 
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Post;
 import org.slf4j.Logger;
@@ -36,7 +38,7 @@ public class SurveysController {
     class GmailApi {
         public List<String> getEmails() {
             List<String> emailAddresses = new ArrayList<>();
-            emailAddresses.add("a@oci.com");
+            emailAddresses.add("williamsh@objectcomputing.com");
             emailAddresses.add("b@oci.com");
             emailAddresses.add("c@oci.com");
             emailAddresses.add("d@oci.com");
@@ -68,6 +70,7 @@ public class SurveysController {
     Map gets returned */
 
     @Post(value = "send")
+    @Consumes(MediaType.APPLICATION_JSON)
     public SendSurveys sendEmails(@Body SendSurveysCommand sendSurveysCommand) {
 
         LOG.info("post survey.getTemplateName(): " + sendSurveysCommand.getTemplateName());
@@ -158,9 +161,10 @@ public class SurveysController {
 
         LOG.info("I'm sending the emails now");
 
-        emailAddressToBodiesMap.forEach((address, body) ->
-                gmailSender.sendEmail("Feelings, Whoa, Whoa, Whoa, Feelings", address, body)
-                );
+        // GmailSender is currently not working
+//        emailAddressToBodiesMap.forEach((address, body) ->
+//                gmailSender.sendEmail("Feelings, Whoa, Whoa, Whoa, Feelings", address, body)
+//                );
 
     }
 

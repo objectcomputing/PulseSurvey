@@ -8,8 +8,8 @@ const App = () => {
       <header className="App-header">
         {/* <img src={logo} className="App-logo" alt="logo" /> */}
         <div>
-          <p>Hi, Holly!</p>
-          <p>Send some pulse surveys?</p>
+          <p>Hello!</p>
+          <p>Would you like to send some pulse surveys?</p>
           <button onClick={sendEmails}>Yes, send surveys</button>
         </div>
       </header>
@@ -17,9 +17,35 @@ const App = () => {
   );
 }
 
-const sendEmails = () => {
-  alert('Holly is sending emails!');
- // emails will need to call backend with /happiness/#clicked in
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
 }
+
+const sendEmails = () => {
+  const data = {templateName: 'emailTemplate', percentOfEmails: '22'}
+  alert('Sending emails!');
+
+ // curl -H "Content-Type: application/json" http://localhost:8080/surveys/send  -d "{"""templateName""":"""emailTemplate""","""percentOfEmails""":"""22"""}" -X POST
+
+  const response =  fetch('http://localhost:8080/surveys/send', {
+    method: 'POST',
+    cache: 'no-cache',
+    headers: {
+      'Accept': 'application/json',
+//      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ templateName: 'emailTemplate' , percentOfEmails: '22' }),
+    data: null
+  })
+      .then(handleErrors)
+      .then(response => {console.log(response)})
+      .catch(error => console.log(error) )
+;
+
+
+  }
 
 export default App;
