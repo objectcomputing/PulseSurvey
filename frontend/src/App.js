@@ -24,21 +24,20 @@ function handleErrors(response) {
     return response;
 }
 
-const sendEmails = () => {
+const sendEmails = async () => {
   const data = {templateName: 'emailTemplate', percentOfEmails: '22'}
   alert('Sending emails!');
 
  // curl -H "Content-Type: application/json" http://localhost:8080/surveys/send  -d "{"""templateName""":"""emailTemplate""","""percentOfEmails""":"""22"""}" -X POST
 
-  const response =  fetch('http://localhost:8080/surveys/send', {
+  const response = await fetch('http://localhost:8080/surveys/send', {
     method: 'POST',
     cache: 'no-cache',
     headers: {
       'Accept': 'application/json',
-//      'Content-Type': 'application/json'
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ templateName: 'emailTemplate' , percentOfEmails: '22' }),
-    data: null
+    body: JSON.stringify({ templateName: 'emailTemplate' , percentOfEmails: '22' })
   })
       .then(handleErrors)
       .then(response => {console.log(response)})
