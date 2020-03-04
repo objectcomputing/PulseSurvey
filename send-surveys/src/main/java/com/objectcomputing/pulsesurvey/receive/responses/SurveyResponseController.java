@@ -102,7 +102,6 @@ public class SurveyResponseController {
     @View("comment")
     public HttpResponse displayComments(String surveyKey) {
 
-        // check to see if there is already a comment for this key
         LOG.info("in /comment. surveyKey = " + surveyKey);
         return HttpResponse.ok(CollectionUtils.mapOf("surveyKey", surveyKey));
     }
