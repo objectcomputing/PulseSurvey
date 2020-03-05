@@ -114,14 +114,10 @@ public class SurveyResponseController {
         LOG.info("The user has commented: " + userComments);
         LOG.info("With surveyKey: " + surveyKey);
         // put comment into the db using the survey key
-        // first check to see if there is currently a comment
-        boolean alreadyIsComment = checkForComment(surveyKey);
-        if (!alreadyIsComment) {
-            saveUserComment(surveyKey, userComments);
-            return HttpResponse.ok();
-        } else {
-            return HttpResponse.ok("This key has already been used.");
-        }
+
+        saveUserComment(surveyKey, userComments);
+
+        return HttpResponse.ok();
     }
 
     @Get("thanks")
@@ -177,12 +173,18 @@ public class SurveyResponseController {
 
     }
 
-    private void saveUserComment(String surveyKey, String commentText) {
+    void saveUserComment(String surveyKey, String comments) {
 
+        boolean commentsAdded = false;
         UserComments userComments = new UserComments();
-        userComments.setCommentText(commentText);
+        userComments.setCommentText(comments);
         userComments.setResponseKey(UUID.fromString(surveyKey));
         userComments = userCommentsRepo.save(userComments);
+
+        LOG.info("Adding comment: " + comments);
+
+        if (userComments.getCommentId() != null) commentsAdded = true;
+
     }
 
     ResponseKey markKeyAsUsed(String surveyKey) {
