@@ -115,8 +115,7 @@ public class SurveyResponseController {
         LOG.info("With surveyKey: " + surveyKey);
         // put comment into the db using the survey key
 
-        boolean commentSaved = saveUserComment(surveyKey, userComments);
-        LOG.info("commentSaved: " + commentSaved);
+        saveUserComment(surveyKey, userComments);
 
         return HttpResponse.ok();
     }
@@ -174,7 +173,7 @@ public class SurveyResponseController {
 
     }
 
-    boolean saveUserComment(String surveyKey, String comments) {
+    void saveUserComment(String surveyKey, String comments) {
 
         boolean commentsAdded = false;
         UserComments userComments = new UserComments();
@@ -186,7 +185,6 @@ public class SurveyResponseController {
 
         if (userComments.getCommentId() != null) commentsAdded = true;
 
-        return commentsAdded;
     }
 
     ResponseKey markKeyAsUsed(String surveyKey) {

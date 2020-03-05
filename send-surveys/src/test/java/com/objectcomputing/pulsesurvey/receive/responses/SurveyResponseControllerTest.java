@@ -1,7 +1,5 @@
 package com.objectcomputing.pulsesurvey.receive.responses;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.objectcomputing.pulsesurvey.email.manager.GmailSender;
 import com.objectcomputing.pulsesurvey.model.Response;
 import com.objectcomputing.pulsesurvey.model.ResponseKey;
@@ -10,9 +8,7 @@ import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
 import com.objectcomputing.pulsesurvey.repositories.ResponseRepository;
 import com.objectcomputing.pulsesurvey.repositories.UserCommentsRepository;
 import com.objectcomputing.pulsesurvey.send.surveys.SurveysControllerTest;
-import com.objectcomputing.pulsesurvey.template.manager.SurveyTemplateManager;
 import io.micronaut.core.io.buffer.ByteBuffer;
-import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -28,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.HashMap;
@@ -36,10 +31,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SystemPropertyExtension.class)
@@ -243,7 +242,8 @@ class SurveyResponseControllerTest {
 
         when(mockUserCommentsRepository.save(any())).thenReturn(fakeUserComments);
 
-        assertTrue(itemUnderTest.saveUserComment(surveyKey, fakeComments));
+        itemUnderTest.saveUserComment(surveyKey, fakeComments);
+        verify(mockUserCommentsRepository, times(1)).save(any(UserComments.class));
 
     }
 
@@ -266,10 +266,6 @@ class SurveyResponseControllerTest {
         }};
 
         when(mockUserCommentsRepository.save(any())).thenReturn(fakeUserComments);
-
-//todo should we just call this directly?
-//        HttpResponse resp = itemUnderTest.sendThankYouWithCommentBlock(userComments, surveyKey);
-//        assertEquals(HttpStatus.OK, resp.getStatus());
 
         HttpResponse response = httpClient
                 .exchange(HttpRequest.POST("/happiness/userComments", fakeBody)
