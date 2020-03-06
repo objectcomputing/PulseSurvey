@@ -8,6 +8,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.context.annotation.Value;
 
 import javax.inject.Singleton;
 import java.io.FileNotFoundException;
@@ -30,7 +31,7 @@ public class GoogleAuthenticator {
      *
      * @param scopes, the scope(s) of access to request for this application
      */
-    public GoogleAuthenticator(@Property(name = "oci-google-drive.application.scopes") Collection<String> scopes)
+    public GoogleAuthenticator(@Property(name="oci-google.application.scopes") Collection<String> scopes)
             throws GeneralSecurityException, IOException {
         this.httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         this.scopes = scopes;
@@ -43,12 +44,12 @@ public class GoogleAuthenticator {
      * @throws IOException If the credentials.json file cannot be found.
      */
     Credential setupCredentials() throws IOException {
-        InputStream in = GoogleDriveAccessor.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        InputStream in = GoogleAuthenticator.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }
 
-        return GoogleCredential.fromStream(in, httpTransport, JSON_FACTORY).createDelegated("kimberlinm@objectcomputing.com ").createScoped(scopes);
+        return GoogleCredential.fromStream(in, httpTransport, JSON_FACTORY).createScoped(scopes);
 
     }
 

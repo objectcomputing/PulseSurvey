@@ -8,6 +8,7 @@ import com.google.api.client.util.Base64;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Message;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.context.annotation.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,7 @@ public class GmailSender {
 
     @Inject
     GmailSender(
-            @Property(name = "oci-google-drive.application.name") String applicationName,
+            @Property(name="oci-google.application.name") String applicationName,
             GoogleAuthenticator authenticator) throws GeneralSecurityException, IOException {
         this.applicationName = applicationName;
         this.authenticator = authenticator;
