@@ -61,6 +61,8 @@ dependencies {
     compile "com.google.api-client:google-api-client:1.28.0"
     compile "com.google.oauth-client:google-oauth-client-jetty:1.28.0"
     compile "com.google.apis:google-api-services-drive:v3-rev20190501-1.28.0"
+    compile group: 'com.mailjet', name: 'mailjet-client', version: '4.2.1'
+    compile group: 'javax.xml.ws', name: 'jaxws-api', version: '2.3.1'
     compile "com.google.apis:google-api-services-gmail:v1-rev20190422-1.28.0"
     runtime group: 'org.postgresql', name: 'postgresql', version: '42.2.9'
     compile 'joda-time:joda-time:2.10.5'

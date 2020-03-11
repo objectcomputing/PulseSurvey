@@ -1,8 +1,11 @@
 package com.objectcomputing.pulsesurvey.send.surveys;
 
+import com.mailjet.client.errors.MailjetException;
+import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import com.objectcomputing.pulsesurvey.email.manager.GmailSender;
 import com.objectcomputing.pulsesurvey.model.SendSurveysCommand;
 import com.objectcomputing.pulsesurvey.model.ResponseKey;
+import com.objectcomputing.pulsesurvey.send.surveys.MailJetSender;
 import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
 import com.objectcomputing.pulsesurvey.template.manager.SurveyTemplateManager;
 
@@ -162,9 +165,21 @@ public class SurveysController {
         LOG.info("I'm sending the emails now");
 
         // GmailSender is currently not working
-//        emailAddressToBodiesMap.forEach((address, body) ->
-//                gmailSender.sendEmail("Feelings, Whoa, Whoa, Whoa, Feelings", address, body)
-//                );
+
+        MailJetSender mailJetSender = new MailJetSender();
+        emailAddressToBodiesMap.forEach((address, body) ->
+                {
+//                    try {
+//                        mailJetSender.emailSender();
+//                    } catch (MailjetException e) {
+//                        LOG.info("Mailjet exception: " + e.getMessage());
+//                        e.printStackTrace();
+//                    } catch (MailjetSocketTimeoutException e) {
+//                        LOG.info("Mailjet socket timeout exception: " + e.getMessage());
+//                        e.printStackTrace();
+//                    }
+                }
+        );
 
     }
 

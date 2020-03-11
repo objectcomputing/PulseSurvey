@@ -237,18 +237,18 @@ public class SurveysControllerTest {
     // sendTheEmails takes in the email/key map and sends out emails with the keys
     // * no idea how to test this one *
     // gmailSender is broken right now
-//    @Test
-//    void testSendTheEmails() {
-//        //todo mock gmailsender
-//        Map<String, String> fakeEmailMap =  new HashMap<String, String>();
-//        fakeEmailMap.put("a@dnc.com","a bunch of fake html");
-//        fakeEmailMap.put("b@dnc.com","more fake html");
-//
-//        itemUnderTest.sendTheEmails(fakeEmailMap);
-//
+    @Test
+    void testSendTheEmails() {
+        //todo mock gmailsender
+        Map<String, String> fakeEmailMap =  new HashMap<String, String>();
+        fakeEmailMap.put("williamsh@objectcomputing.com","How is your day going?");
+        fakeEmailMap.put("williamsh@objectcomputing.com","more fake html");
+
+        itemUnderTest.sendTheEmails(fakeEmailMap);
+
 //        verify(mockGmailSender,
 //                times(fakeEmailMap.size())).sendEmail(any(String.class), any(String.class), any(String.class));
-//
-//    }
+
+    }
 
 }
