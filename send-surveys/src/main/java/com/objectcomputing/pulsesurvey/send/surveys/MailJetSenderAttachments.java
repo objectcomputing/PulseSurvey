@@ -7,6 +7,16 @@ import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import com.mailjet.client.resource.Emailv31;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.objectcomputing.pulsesurvey.template.manager.SurveyTemplateManager;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -14,41 +24,55 @@ import org.slf4j.LoggerFactory;
 
 public class MailJetSenderAttachments {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SurveysController.class);
+        private static final Logger LOG = LoggerFactory.getLogger(SurveysController.class);
 
-    /**
-     * This call sends a message to the given recipient with attachment.
-     */
-    public static void main(String[] args) throws MailjetException, MailjetSocketTimeoutException {
-//    public void emailSender() throws MailjetException, MailjetSocketTimeoutException {
-        MailjetClient client;
-        MailjetRequest request;
-        MailjetResponse response;
-        client = new MailjetClient(System.getenv("MJ_APIKEY_PUBLIC"), System.getenv("MJ_APIKEY_PRIVATE"), new ClientOptions("v3.1"));
-        request = new MailjetRequest(Emailv31.resource)
-                .property(Emailv31.MESSAGES, new JSONArray()
-                        .put(new JSONObject()
-                                .put(Emailv31.Message.FROM, new JSONObject()
-                                        .put("Email", "kimberlinm@objectcomputing.com")
-                                        .put("Name", "Michael Kimberlin"))
-                                .put(Emailv31.Message.TO, new JSONArray()
-                                        .put(new JSONObject()
-                                                .put("Email", "williamsmom5@yahoo.com")
-                                                .put("Name", "Holly Williams")))
-                                .put(Emailv31.Message.SUBJECT, "Feelings, Whoa, Whoa, Whoa, Feelings")
-                          //      .put(Emailv31.Message.TEXTPART, "How is your work day?")
-                                .put(Emailv31.Message.HTMLPART, "<h3>How is your work day? </h3><br /><a href='http://localhost:8080/happiness?currentEmotion=happy&surveyKey=358d819c-0a8f-4b9c-b566-88e7e534dc81'><img alt=\"I'm happy\" src=\\\"cid:id1\\\"></a>")
-                                .put(Emailv31.Message.ATTACHMENTS, new JSONArray()
-                                        .put(new JSONObject()
-                                                .put("ContentType", "image/png")
-                                                .put("Filename", "test.png")
-                                                .put("ContentID", "id1")
-                                                .put("Base64Content", "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"
-                                                )))));
-        response = client.post(request);
-        LOG.info("Mailjet response status: " + response.getStatus());
-        LOG.info("Mailjet response data: " + response.getData());
-        System.out.println(response.getStatus());
-        System.out.println(response.getData());
+        /**
+         * This call sends a message to the given recipient with attachment.
+         */
+        public static void main(String[] args) throws MailjetException, MailjetSocketTimeoutException {
+                // public void emailSender() throws MailjetException,
+                // MailjetSocketTimeoutException {
+                MailjetClient client;
+                MailjetRequest request;
+                MailjetResponse response;
+
+                SurveyTemplateManager templateManager = new SurveyTemplateManager(
+                                new DefaultMustacheFactory(new File("/Users/mkimberlin/projects/PulseSurvey/send-surveys/src/main/resources")));
+
+                Map<String, String> emails = new HashMap<>();
+                try {
+                        emails = templateManager.populateEmails("emailTemplate", new HashMap<String, String>() {
+                                {
+                                        put("mkimberlin@gmail.com", "JUNKVALUE1");
+                                        put("williamsmom5@yahoo.com", "JUNKVALUE2");
+                                }
+                        });
+                } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                }
+
+        client = new MailjetClient("e575c4acaed71aa4ba81cab428849f4c", "d01795635bea4b23e33c522a553ba078", new ClientOptions("v3.1"));
+
+        Set<String> keys = emails.keySet();
+        for(String key: keys) {
+                request = new MailjetRequest(Emailv31.resource)
+                        .property(Emailv31.MESSAGES, new JSONArray()
+                                .put(new JSONObject()
+                                        .put(Emailv31.Message.FROM, new JSONObject()
+                                                .put("Email", "kimberlinm@objectcomputing.com")
+                                                .put("Name", "Michael Kimberlin"))
+                                        .put(Emailv31.Message.TO, new JSONArray()
+                                                .put(new JSONObject()
+                                                        .put("Email", key)))
+                                        .put(Emailv31.Message.SUBJECT, "Feelings, Whoa, Whoa, Whoa, Feelings")
+                                //      .put(Emailv31.Message.TEXTPART, "How is your work day?")
+                                        .put(Emailv31.Message.HTMLPART, emails.get(key))));
+                response = client.post(request);
+                LOG.info("Mailjet response status: " + response.getStatus());
+                LOG.info("Mailjet response data: " + response.getData());
+                System.out.println(response.getStatus());
+                System.out.println(response.getData());
+        }
     }
 }
