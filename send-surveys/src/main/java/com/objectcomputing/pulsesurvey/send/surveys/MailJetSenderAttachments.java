@@ -52,7 +52,7 @@ public class MailJetSenderAttachments {
                         e.printStackTrace();
                 }
 
-        client = new MailjetClient("e575c4acaed71aa4ba81cab428849f4c", "d01795635bea4b23e33c522a553ba078", new ClientOptions("v3.1"));
+        client = new MailjetClient(System.getenv("MJ_APIKEY_PUBLIC"), System.getenv("MJ_APIKEY_PRIVATE"), new ClientOptions("v3.1"));
 
         Set<String> keys = emails.keySet();
         for(String key: keys) {
