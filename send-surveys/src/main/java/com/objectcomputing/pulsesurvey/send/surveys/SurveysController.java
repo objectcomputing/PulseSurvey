@@ -41,11 +41,15 @@ public class SurveysController {
     class GmailApi {
         public List<String> getEmails() {
             List<String> emailAddresses = new ArrayList<>();
-            emailAddresses.add("williamsh@objectcomputing.com");
-            emailAddresses.add("b@oci.com");
-            emailAddresses.add("c@oci.com");
-            emailAddresses.add("d@oci.com");
-            emailAddresses.add("e@oci.com");
+            emailAddresses.add("williamsmom5@yahoo.com");
+            emailAddresses.add("hwmom5@gmail.com");
+            emailAddresses.add("hollyjwilliams5@gmail.com");
+//            emailAddresses.add("williamsh@objectcomputing.com");
+//            emailAddresses.add("kimberlinm@objectcomputing.com");
+//            emailAddresses.add("schindlerj@objectcomputing.com");
+//            emailAddresses.add("mckiernanc@objectcomputing.com");
+//            emailAddresses.add("warnerj@objectcomputing.com");
+//            emailAddresses.add("patilm@objectcomputing.com");
             return emailAddresses;
         }
     }
@@ -85,15 +89,13 @@ public class SurveysController {
 
         LOG.info("Grabbing email addresses.");
         List<String> emailAddresses = getRandomEmailAddresses(percentOfEmailsToGet);
-        LOG.info("Generating keys.");
         List<ResponseKey> keys = generateAndSaveKeys(emailAddresses.size());
-        LOG.info("Mapping emails to keys.");
         Map<String, String> emailKeyMap = new HashMap<String, String>();
         emailKeyMap = mapEmailsToKeys(emailAddresses, keys);
         LOG.info("And Finally  - emailKeyMap: " + emailKeyMap);
 
         Map<String, String> emailBodies = null;
-        // populate the emails
+        // populate the emails with the keys
         try {
              emailBodies = templateManager.populateEmails(sendSurveysCommand.getTemplateName(),
                                                           emailKeyMap);
@@ -164,22 +166,23 @@ public class SurveysController {
 
         LOG.info("I'm sending the emails now");
 
-        // GmailSender is currently not working
-
         MailJetSender mailJetSender = new MailJetSender();
-        emailAddressToBodiesMap.forEach((address, body) ->
-                {
-//                    try {
-//                        mailJetSender.emailSender();
-//                    } catch (MailjetException e) {
-//                        LOG.info("Mailjet exception: " + e.getMessage());
-//                        e.printStackTrace();
-//                    } catch (MailjetSocketTimeoutException e) {
-//                        LOG.info("Mailjet socket timeout exception: " + e.getMessage());
-//                        e.printStackTrace();
-//                    }
-                }
-        );
+//        emailAddressToBodiesMap.forEach((address, body) ->
+//                {
+
+           // pass into emailSender address and body
+
+                    try {
+                        mailJetSender.emailSender(emailAddressToBodiesMap);
+                    } catch (MailjetException e) {
+                        LOG.info("Mailjet exception: " + e.getMessage());
+                        e.printStackTrace();
+                    } catch (MailjetSocketTimeoutException e) {
+                        LOG.info("Mailjet socket timeout exception: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+   //             }
+   //     );
 
     }
 

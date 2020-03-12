@@ -66,7 +66,6 @@ public class MailJetSenderAttachments {
                                                 .put(new JSONObject()
                                                         .put("Email", key)))
                                         .put(Emailv31.Message.SUBJECT, "Feelings, Whoa, Whoa, Whoa, Feelings")
-                                //      .put(Emailv31.Message.TEXTPART, "How is your work day?")
                                         .put(Emailv31.Message.HTMLPART, emails.get(key))));
                 response = client.post(request);
                 LOG.info("Mailjet response status: " + response.getStatus());
