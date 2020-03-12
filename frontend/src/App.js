@@ -9,7 +9,6 @@ const App = () => {
         {/* <img src={logo} className="App-logo" alt="logo" /> */}
         <div>
           <p>Hello!</p>
-          // needs to ask what percent of emails to send
           <p>Would you like to send some pulse surveys?</p>
           <button onClick={sendEmails}>Yes, send surveys</button>
         </div>
@@ -27,7 +26,7 @@ function handleErrors(response) {
 
 const sendEmails = async () => {
   const data = {templateName: 'emailTemplate', percentOfEmails: '22'}
-//  alert('Sending emails!');
+  alert('Sending emails!');
 
  // curl -H "Content-Type: application/json" http://localhost:8080/surveys/send  -d "{"""templateName""":"""emailTemplate""","""percentOfEmails""":"""22"""}" -X POST
 
