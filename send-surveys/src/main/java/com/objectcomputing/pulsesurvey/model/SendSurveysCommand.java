@@ -1,9 +1,12 @@
 package com.objectcomputing.pulsesurvey.model;
 
+import java.util.List;
+
 public class SendSurveysCommand {
 
     String templateName;
     String percentOfEmails;
+    List<String> emailAddresses;
 
     public String getTemplateName() {
         return templateName;
@@ -20,6 +23,10 @@ public class SendSurveysCommand {
     public void setPercentOfEmails(String percentOfEmails) {
         this.percentOfEmails = percentOfEmails;
     }
+
+    public List<String> getEmailAddresses() { return emailAddresses; }
+
+    public void setEmailAddresses(List<String> emailAddresses) { this.emailAddresses = emailAddresses; }
 
     public SendSurveysCommand() {
     }

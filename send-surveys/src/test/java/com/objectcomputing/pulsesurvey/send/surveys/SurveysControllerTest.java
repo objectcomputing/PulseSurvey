@@ -84,8 +84,6 @@ public class SurveysControllerTest {
         return toReturn;
     }
 
- //   static final int PERCENT_OF_EMAILS = 10;
-
     @Test
     void testSendEmails_ReportsCorrectNumber() {
         String percentOfEmails = "10";

@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 @Controller("/surveys")
 public class SurveysController {
     private static final Logger LOG = LoggerFactory.getLogger(SurveysController.class);
+    private List<String> emailAddresses = null;
 
     @Inject
     private ResponseKeyRepository responseKeyRepo;
@@ -40,17 +41,17 @@ public class SurveysController {
 
     class GmailApi {
         public List<String> getEmails() {
-            List<String> emailAddresses = new ArrayList<>();
-            emailAddresses.add("williamsmom5@yahoo.com");
-            emailAddresses.add("hwmom5@gmail.com");
-            emailAddresses.add("hollyjwilliams5@gmail.com");
+            List<String> gmailAddresses = new ArrayList<>();
+            gmailAddresses.add("williamsmom5@yahoo.com");
+            gmailAddresses.add("hwmom5@gmail.com");
+            gmailAddresses.add("hollyjwilliams5@gmail.com");
 //            emailAddresses.add("williamsh@objectcomputing.com");
 //            emailAddresses.add("kimberlinm@objectcomputing.com");
 //            emailAddresses.add("schindlerj@objectcomputing.com");
 //            emailAddresses.add("mckiernanc@objectcomputing.com");
 //            emailAddresses.add("warnerj@objectcomputing.com");
 //            emailAddresses.add("patilm@objectcomputing.com");
-            return emailAddresses;
+            return gmailAddresses;
         }
     }
 
@@ -82,6 +83,8 @@ public class SurveysController {
 
         LOG.info("post survey.getTemplateName(): " + sendSurveysCommand.getTemplateName());
         LOG.info("post survey.getPercentOfEmails(): " + sendSurveysCommand.getPercentOfEmails());
+        LOG.info("post survey.getEmailAddresses(): " + sendSurveysCommand.getEmailAddresses());
+        emailAddresses = sendSurveysCommand.getEmailAddresses();
 
         LOG.info("survey.percentOfEmails: " + sendSurveysCommand.getPercentOfEmails());
         int percentOfEmailsToGet = Integer.parseInt(sendSurveysCommand.getPercentOfEmails());
@@ -118,12 +121,12 @@ public class SurveysController {
         LOG.info("totalAddresses: " + totalAddresses);
         long numberOfAddressesRequested = (long) Math.ceil(totalAddresses * (double) percentOfEmailsNeeded / 100.0);
         LOG.info("numberOfAddressesRequested: " + numberOfAddressesRequested);
-        List<String> emailAddresses = new ArrayList<String>();
+//        List<String> emailAddresses = new ArrayList<String>();
         List<String> randomSubsetEmailAddresses = new ArrayList<String>();
 
-        emailAddresses = gmail.getEmails();
+ //       emailAddresses = gmail.getEmails();
         // get random sampling of emails
-        // later - get x random email addresses from google
+ // todo - get x random email addresses from google
         for (int i = 0; i < numberOfAddressesRequested; i++) {
             randomSubsetEmailAddresses.add(emailAddresses.get(i));
         }
@@ -145,7 +148,9 @@ public class SurveysController {
     }
 
     int getTotalNumberOfAvailableEmailAddresses() {
-        return gmail.getEmails().size();
+//        return gmail.getEmails().size();
+        return emailAddresses.size();
+
     }
 
     Map<String, String> mapEmailsToKeys(List<String> emails, List<ResponseKey> keys) {
@@ -162,27 +167,19 @@ public class SurveysController {
 
     void sendTheEmails(Map<String, String> emailAddressToBodiesMap) {
 
-        // call some google api with the list of emails to send them with a key for each
-
         LOG.info("I'm sending the emails now");
 
         MailJetSender mailJetSender = new MailJetSender();
-//        emailAddressToBodiesMap.forEach((address, body) ->
-//                {
 
-           // pass into emailSender address and body
-
-                    try {
-                        mailJetSender.emailSender(emailAddressToBodiesMap);
-                    } catch (MailjetException e) {
-                        LOG.info("Mailjet exception: " + e.getMessage());
-                        e.printStackTrace();
-                    } catch (MailjetSocketTimeoutException e) {
-                        LOG.info("Mailjet socket timeout exception: " + e.getMessage());
-                        e.printStackTrace();
-                    }
-   //             }
-   //     );
+        try {
+            mailJetSender.emailSender(emailAddressToBodiesMap);
+        } catch (MailjetException e) {
+            LOG.info("Mailjet exception: " + e.getMessage());
+            e.printStackTrace();
+        } catch (MailjetSocketTimeoutException e) {
+            LOG.info("Mailjet socket timeout exception: " + e.getMessage());
+            e.printStackTrace();
+        }
 
     }
 

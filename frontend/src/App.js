@@ -25,7 +25,8 @@ function handleErrors(response) {
 }
 
 const sendEmails = async () => {
-  const data = {templateName: 'emailTemplate', percentOfEmails: '22'}
+  const data = {templateName: 'emailTemplate', percentOfEmails: '100',
+    emailAddresses: ['williamsmom5@yahoo.com', 'hollyjwilliams5@gmail.com', 'williamsh@objectcomputing.com']}
   alert('Sending emails!');
 
  // curl -H "Content-Type: application/json" http://localhost:8080/surveys/send  -d "{"""templateName""":"""emailTemplate""","""percentOfEmails""":"""22"""}" -X POST
@@ -37,7 +38,8 @@ const sendEmails = async () => {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ templateName: 'emailTemplate' , percentOfEmails: '100' })
+    body: JSON.stringify(data)
+//    body: JSON.stringify({ templateName: 'emailTemplate' , percentOfEmails: '100' })
   })
       .then(handleErrors)
       .then(response => {console.log(response)})
