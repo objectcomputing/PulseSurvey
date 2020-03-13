@@ -58,8 +58,6 @@ class SurveyResponseControllerTest {
 
     UserCommentsRepository mockUserCommentsRepository = mock(UserCommentsRepository.class);
 
-    GmailSender mockGmailSender = mock(GmailSender.class);
-
     private static final Logger LOG = LoggerFactory.getLogger(SurveysControllerTest.class);
 
     @BeforeEach
@@ -73,7 +71,6 @@ class SurveyResponseControllerTest {
 //        reset(gmailApiMock);
 //        reset(mockTemplateManager);
         reset(mockResponseKeyRepository);
-        reset(mockGmailSender);
         reset(mockResponseRepository);
         reset(mockUserCommentsRepository);
     }

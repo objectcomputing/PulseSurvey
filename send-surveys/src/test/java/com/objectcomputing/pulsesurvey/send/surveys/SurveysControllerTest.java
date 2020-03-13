@@ -48,24 +48,16 @@ public class SurveysControllerTest {
     @Inject
     SurveysController itemUnderTest;
 
-    SurveysController.GmailApi gmailApiMock = mock(SurveysController.GmailApi.class);
-
     ResponseKeyRepository mockRepository = mock(ResponseKeyRepository.class);
 
     SurveyTemplateManager mockTemplateManager = mock(SurveyTemplateManager.class);
 
-    GmailSender mockGmailSender = mock(GmailSender.class);
-
     @BeforeEach
     void setupTest() {
-        itemUnderTest.setGmailApi(gmailApiMock);
         itemUnderTest.setResponseKeyRepo(mockRepository);
         itemUnderTest.setTemplateManager(mockTemplateManager);
-        itemUnderTest.setGmailSender(mockGmailSender);
-        reset(gmailApiMock);
         reset(mockRepository);
         reset(mockTemplateManager);
-        reset(mockGmailSender);
     }
 
     List<String> generateFakeEmails(int size) {
@@ -96,8 +88,6 @@ public class SurveysControllerTest {
         final int numkeys = (int)(Math.random()*100)%100;
         LOG.info("Using numberOfEmailsToBeSent: "+ numberOfEmailsToBeSent);
 
-        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
-
         List<ResponseKey> fakeKeys = generateFakeResponseKeys(numkeys);
         when(mockRepository.saveAll(any())).thenReturn(fakeKeys);
 
@@ -118,22 +108,11 @@ public class SurveysControllerTest {
         SendSurveysCommand sendSurveysCommand = new SendSurveysCommand();
         sendSurveysCommand.setTemplateName("emailTemplate");
         sendSurveysCommand.setPercentOfEmails(percentOfEmails);
+        sendSurveysCommand.setEmailAddresses(fakeEmails);
         SendSurveys sent = itemUnderTest.sendEmails(sendSurveysCommand);
 
         assertThat(sent.getName(), containsString("Sent surveys:"));
         assertThat(sent.getName(), containsString("Sent surveys: "+numberOfEmailsToBeSent));
-    }
-
-    /**
-     * Ensure that the number of email addresses returned is the total number provided by
-     * the GMail API.
-     **/
-    @Test
-    void testGetTotalNumberOfAvailableEmailAddresses() {
-        List<String> fakeEmails = generateFakeEmails((int)(Math.random()*100)%50);
-        LOG.info("Using addresses: "+ fakeEmails.size());
-        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
-        assertEquals(fakeEmails.size(), itemUnderTest.getTotalNumberOfAvailableEmailAddresses());
     }
 
     // getRandomEmailAddresses produces a list of email addresses
@@ -147,9 +126,7 @@ public class SurveysControllerTest {
         final long numberOfEmailsToBeSent = (long) Math
                 .ceil(fakeEmails.size() * (double) percentOfEmailsNeeded / 100.0);
 
-        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
-
-        assertEquals(numberOfEmailsToBeSent, itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded).size());
+        assertEquals(numberOfEmailsToBeSent, itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded, fakeEmails).size());
     }
 
     // getRandomEmailAddresses produces a list of email addresses
@@ -162,10 +139,8 @@ public class SurveysControllerTest {
         final long numberOfEmailsToBeSent = (long) Math
                 .ceil(fakeEmails.size() * (double) percentOfEmailsNeeded / 100.0);
 
-        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
-
         assertEquals(numberOfEmailsToBeSent,
-                itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded).stream().distinct().count());
+                itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded, fakeEmails).stream().distinct().count());
     }
 
     // getRandomEmailAddresses produces a list of email addresses
@@ -177,10 +152,7 @@ public class SurveysControllerTest {
         LOG.info("Using addresses: "+ fakeEmails.size());
         final int percentOfEmailsNeeded = 10;
 
-        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
-        List<String> allAddresses = gmailApiMock.getEmails();
-
-        assertTrue(allAddresses.containsAll(itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded)));
+        assertTrue(fakeEmails.containsAll(itemUnderTest.getRandomEmailAddresses(percentOfEmailsNeeded, fakeEmails)));
     }
 
     // generateKeys produces a list of uuid keys in string format
@@ -208,8 +180,6 @@ public class SurveysControllerTest {
         List<String> fakeEmails = generateFakeEmails(numberOfEmails);
         List<ResponseKey> fakeKeys = generateFakeResponseKeys(numberOfEmails);
 
-        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
-
         assertEquals(fakeEmails.size(), itemUnderTest.mapEmailsToKeys(fakeEmails, fakeKeys).size());
     }
 
@@ -223,8 +193,6 @@ public class SurveysControllerTest {
         LOG.info("Mapping emails: "+ numberOfEmails);
         List<String> fakeEmails = generateFakeEmails(numberOfEmails);
         List<ResponseKey> fakeKeys = generateFakeResponseKeys(numberOfEmails);
-        
-        when(gmailApiMock.getEmails()).thenReturn(fakeEmails);
         
         Map<String, String> map = itemUnderTest.mapEmailsToKeys(fakeEmails,
         fakeKeys);

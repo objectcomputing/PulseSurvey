@@ -1,4 +1,4 @@
-package com.objectcomputing.pulsesurvey.send.surveys;
+package com.objectcomputing.pulsesurvey.email.manager;
 
 import com.mailjet.client.ClientOptions;
 import com.mailjet.client.MailjetClient;
@@ -17,7 +17,7 @@ import java.util.Set;
 
 public class MailJetSender {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SurveysController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MailJetSender.class);
 
     /**
      * This call sends a message to the given recipient with attachment.

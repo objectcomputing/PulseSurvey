@@ -2,10 +2,9 @@ package com.objectcomputing.pulsesurvey.send.surveys;
 
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
-import com.objectcomputing.pulsesurvey.email.manager.GmailSender;
+import com.objectcomputing.pulsesurvey.email.manager.MailJetSender;
 import com.objectcomputing.pulsesurvey.model.SendSurveysCommand;
 import com.objectcomputing.pulsesurvey.model.ResponseKey;
-import com.objectcomputing.pulsesurvey.send.surveys.MailJetSender;
 import com.objectcomputing.pulsesurvey.repositories.ResponseKeyRepository;
 import com.objectcomputing.pulsesurvey.template.manager.SurveyTemplateManager;
 
@@ -28,7 +27,6 @@ import org.slf4j.LoggerFactory;
 @Controller("/surveys")
 public class SurveysController {
     private static final Logger LOG = LoggerFactory.getLogger(SurveysController.class);
-    private List<String> emailAddresses = null;
 
     @Inject
     private ResponseKeyRepository responseKeyRepo;
@@ -37,29 +35,7 @@ public class SurveysController {
     private SurveyTemplateManager templateManager;
 
     @Inject
-    private GmailSender gmailSender;
-
-    class GmailApi {
-        public List<String> getEmails() {
-            List<String> gmailAddresses = new ArrayList<>();
-            gmailAddresses.add("williamsmom5@yahoo.com");
-            gmailAddresses.add("hwmom5@gmail.com");
-            gmailAddresses.add("hollyjwilliams5@gmail.com");
-//            emailAddresses.add("williamsh@objectcomputing.com");
-//            emailAddresses.add("kimberlinm@objectcomputing.com");
-//            emailAddresses.add("schindlerj@objectcomputing.com");
-//            emailAddresses.add("mckiernanc@objectcomputing.com");
-//            emailAddresses.add("warnerj@objectcomputing.com");
-//            emailAddresses.add("patilm@objectcomputing.com");
-            return gmailAddresses;
-        }
-    }
-
-    GmailApi gmail = new GmailApi();
-
-    public void setGmailApi(GmailApi api) {
-        this.gmail = api;
-    }
+    private MailJetSender emailSender;
 
     public void setResponseKeyRepo(ResponseKeyRepository responseKeyRepository) {
         this.responseKeyRepo = responseKeyRepository;
@@ -67,10 +43,6 @@ public class SurveysController {
 
     public void setTemplateManager(SurveyTemplateManager surveyTemplateManager) {
         this.templateManager = surveyTemplateManager;
-    }
-
-    public void setGmailSender(GmailSender gmailSender) {
-        this.gmailSender = gmailSender;
     }
 
     /* call GetRandomEmails(what percentage of current employees) ->
@@ -84,14 +56,14 @@ public class SurveysController {
         LOG.info("post survey.getTemplateName(): " + sendSurveysCommand.getTemplateName());
         LOG.info("post survey.getPercentOfEmails(): " + sendSurveysCommand.getPercentOfEmails());
         LOG.info("post survey.getEmailAddresses(): " + sendSurveysCommand.getEmailAddresses());
-        emailAddresses = sendSurveysCommand.getEmailAddresses();
+        List<String> emailAddresses = sendSurveysCommand.getEmailAddresses();
 
         LOG.info("survey.percentOfEmails: " + sendSurveysCommand.getPercentOfEmails());
         int percentOfEmailsToGet = Integer.parseInt(sendSurveysCommand.getPercentOfEmails());
         LOG.info("percentOfEmailsToGet: " + percentOfEmailsToGet);
 
         LOG.info("Grabbing email addresses.");
-        List<String> emailAddresses = getRandomEmailAddresses(percentOfEmailsToGet);
+        emailAddresses = getRandomEmailAddresses(percentOfEmailsToGet, emailAddresses);
         List<ResponseKey> keys = generateAndSaveKeys(emailAddresses.size());
         Map<String, String> emailKeyMap = new HashMap<String, String>();
         emailKeyMap = mapEmailsToKeys(emailAddresses, keys);
@@ -116,17 +88,13 @@ public class SurveysController {
 
     }
 
-    List<String> getRandomEmailAddresses(int percentOfEmailsNeeded) {
-        double totalAddresses = getTotalNumberOfAvailableEmailAddresses();
+    List<String> getRandomEmailAddresses(int percentOfEmailsNeeded, List<String> emailAddresses) {
+        double totalAddresses = emailAddresses.size();
         LOG.info("totalAddresses: " + totalAddresses);
         long numberOfAddressesRequested = (long) Math.ceil(totalAddresses * (double) percentOfEmailsNeeded / 100.0);
         LOG.info("numberOfAddressesRequested: " + numberOfAddressesRequested);
-//        List<String> emailAddresses = new ArrayList<String>();
         List<String> randomSubsetEmailAddresses = new ArrayList<String>();
 
- //       emailAddresses = gmail.getEmails();
-        // get random sampling of emails
- // todo - get x random email addresses from google
         for (int i = 0; i < numberOfAddressesRequested; i++) {
             randomSubsetEmailAddresses.add(emailAddresses.get(i));
         }
@@ -147,12 +115,6 @@ public class SurveysController {
         return returned;
     }
 
-    int getTotalNumberOfAvailableEmailAddresses() {
-//        return gmail.getEmails().size();
-        return emailAddresses.size();
-
-    }
-
     Map<String, String> mapEmailsToKeys(List<String> emails, List<ResponseKey> keys) {
 
         Map<String, String> map = new HashMap<String, String>();
@@ -169,10 +131,8 @@ public class SurveysController {
 
         LOG.info("I'm sending the emails now");
 
-        MailJetSender mailJetSender = new MailJetSender();
-
         try {
-            mailJetSender.emailSender(emailAddressToBodiesMap);
+            emailSender.emailSender(emailAddressToBodiesMap);
         } catch (MailjetException e) {
             LOG.info("Mailjet exception: " + e.getMessage());
             e.printStackTrace();
